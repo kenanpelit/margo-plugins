@@ -33,15 +33,16 @@ widget.
 - [x] `margo-plugins` repo: README, `registry.toml` skeleton, GPL-3.0 license
 - [x] Documented source / registry / manifest layout
 
-### M1 — Manager core (`mshell-plugins` crate)
-- [ ] `manifest.toml` + `registry.toml` serde types
-- [ ] Fetch a source's registry via shallow sparse git clone
-- [ ] Install / uninstall / update a plugin (sparse-clone its folder into
+### M1 — Manager core (`mshell-plugins` crate) ✅
+- [x] `manifest.toml` + `registry.toml` serde types
+- [x] Fetch a source's registry via shallow sparse git clone
+- [x] Install / uninstall a plugin (sparse-clone its folder into
       `~/.config/margo/mshell/plugins/<key>/`)
-- [ ] Local state in `plugins.toml` (sources list + enabled plugins)
-- [ ] Manifest validation + `min_mshell` version gate
-- [ ] Composite keys (`hash:id`) so custom sources don't collide with official
-- [ ] Unit tests
+- [x] Local state in `plugins.toml` (sources list + enabled plugins)
+- [x] Manifest validation + `min_mshell` version gate
+- [x] Composite keys (`hash:id`) so custom sources don't collide with official
+- [x] Unit tests (18, green)
+- [ ] Update (re-install on newer registry version) — deferred to M4 alongside the CLI
 
 ### M2 — Widget bridge
 - [ ] Map each enabled plugin's `[[widget]]` to a `CustomWidgetConfig`
