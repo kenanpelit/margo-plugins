@@ -1,0 +1,18 @@
+# margo-plugins registry
+#
+# Index of every plugin offered by this source. mshell shallow-clones just
+# this file to populate Settings → Widgets → Plugins → Available.
+#
+# Add one [[plugins]] entry per plugin. `dir` is the folder in this repo that
+# holds the plugin's manifest.toml; `version` must match that manifest.
+#
+# Example (uncomment and adapt):
+#
+# [[plugins]]
+# id = "weather-tr"
+# dir = "weather-tr"
+# version = "1.2.0"
+# name = "Türkiye Weather"
+# min_mshell = "0.8.8"
+
+# No plugins published yet.
