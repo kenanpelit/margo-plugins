@@ -1,0 +1,18 @@
+id = "network-speed"
+name = "Network Speed"
+version = "1.0.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Live download / upload throughput (↓ / ↑ per second) across all real interfaces, sampled from /proc/net/dev. Loopback excluded."
+
+# A self-contained pill: the exec samples /proc/net/dev twice a second apart,
+# diffs the byte counters, and prints the per-second rate. Inlined (no separate
+# script) so it works regardless of where the plugin is installed.
+[[widget]]
+key = "rate"
+tooltip = "Network throughput — ↓ download / ↑ upload per second (loopback excluded)"
+template = "{output}"
+interval = 1
+exec = '''
+a=$(awk 'NR>2{gsub(/:/," ");if($1!="lo"){r+=$2;t+=$10}}END{print r+0, t+0}' /proc/net/dev); sleep 1; b=$(awk 'NR>2{gsub(/:/," ");if($1!="lo"){r+=$2;t+=$10}}END{print r+0, t+0}' /proc/net/dev); echo "$a $b" | awk '{d=$3-$1;u=$4-$2;if(d<0)d=0;if(u<0)u=0;printf "↓ %s  ↑ %s",h(d),h(u)}function h(x){if(x>=1048576)return sprintf("%.1fM",x/1048576);if(x>=1024)return sprintf("%.0fK",x/1024);return sprintf("%.0fB",x)}'
+'''
