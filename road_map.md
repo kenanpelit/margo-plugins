@@ -44,17 +44,23 @@ widget.
 - [x] Unit tests (18, green)
 - [ ] Update (re-install on newer registry version) — deferred to M4 alongside the CLI
 
-### M2 — Widget bridge
-- [ ] Map each enabled plugin's `[[widget]]` to a `CustomWidgetConfig`
-- [ ] Namespace placed widgets as `plugin:<id>:<key>`
-- [ ] Make plugin widgets selectable in bar slots like any built-in widget
-- [ ] Resolve manifest asset paths (icons/images) relative to the plugin dir
+### M2 — Widget bridge ✅
+- [x] Map each enabled plugin's `[[widget]]` to a `CustomWidgetConfig`
+- [x] Namespace placed widgets as `plugin:<key>:<widget>` (derived layer:
+      added on config load, stripped before persist — profile stays clean)
+- [x] Plugin widgets render through the existing `Custom(name)` bar path
+- [x] Resolve manifest image paths relative to the plugin dir
 
-### M3 — Settings UI
-- [ ] **Plugins** page with **Sources / Available / Installed** sub-tabs
-- [ ] Add / remove source URLs
-- [ ] Browse available, install, enable/disable, update, remove
-- [ ] Install/enable confirmation that lists the shell commands a plugin runs
+### M3 — Settings UI ✅ (core)
+- [x] **Plugins** page under Settings → Widgets (Sources / Available /
+      Installed sections)
+- [x] Add / remove source URLs
+- [x] Refresh registries, install, enable/disable, uninstall (async git off
+      the GTK loop)
+- [x] Trust gate: installed rows list the shell commands a plugin declares;
+      code only runs once you enable it
+- [ ] `update` (re-install on newer version) — with the CLI in M4
+- [ ] Polish pass after live testing (empty/error states, busy spinner)
 
 ### M4 — CLI + official content
 - [ ] `mplugins` CLI: `install <url|id>`, `list`, `update`, `remove`, `sources`
