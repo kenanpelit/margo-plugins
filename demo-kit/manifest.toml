@@ -1,0 +1,20 @@
+id = "demo-kit"
+name = "Demo Kit"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "A reference plugin that exercises every node kind and host capability in the WASM tier. Use it as a living example when authoring your own plugin."
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+[[widget]]
+key = "demo"
+icon = "applications-engineering-symbolic"
+tooltip = "WASM plugin kitchen sink — every node kind and capability."
+exec = "echo demo"
+template = "{output}"
+interval = 30
+max_chars = 8
+opens_panel = true
+on_click = "notify-send -- 'Demo Kit' 'Click for the in-shell panel.'"

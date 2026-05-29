@@ -1,0 +1,22 @@
+# Demo plugin — exercises every node kind and host capability the WASM tier
+# ships. Acts as both a reference for plugin authors and the milestone-
+# acceptance fixture for the "Now" roadmap entry.
+#
+# Rebuild:  cargo build --target wasm32-wasip2 --release \
+#           && cp target/wasm32-wasip2/release/demo_kit.wasm ./plugin.wasm
+[package]
+name = "demo-kit"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+
+[profile.release]
+opt-level = "s"
+
+[workspace]
