@@ -67,12 +67,21 @@ widget.
 - [ ] Publish the first real plugins in this repo + flesh out `registry.toml`
 - [ ] End-to-end docs (authoring, publishing, installing)
 
-### M5 — Beyond declarative (future, optional)
-- [ ] Declarative **menu** spec (a popup the pill opens: rows, toggles, sliders)
-- [ ] Richer widget vocabulary (progress, dropdown, multi-line)
-- [ ] Per-plugin settings surfaced in the Settings page
-- [ ] Optional embedded **Lua** API for logic-rich widgets
-- [ ] (Stretch) sandboxed **WASM** plugins for arbitrary UI
+### M5a — Declarative menus ✅
+- [x] `[[widget.menu]]` spec: a click-popover of command rows (icon + label →
+      `sh -c`), rendered from manifest data. Unblocks "pill + actions menu"
+      widgets (firewall, containers, …) with no compiled code.
+- [ ] Richer rows — toggles/sliders bound to live state (needs the WASM tier)
+
+### M5b — Sandboxed Rust/WASM plugins (chosen scripting tier)
+- [ ] Embed a wasm runtime (wasmtime) + a host API for building widgets/menus
+- [ ] Plugin authored in Rust (or any lang) → compiled to wasm → run sandboxed
+- [ ] Live/interactive state, per-plugin settings, richer UI
+- This is the big one (host UI/component model from scratch); tackled after
+  the declarative tier + M4 settle.
+
+> Decision (2026-05-29): the scripting tier is **WASM (Rust plugins)**, not
+> Lua — sandboxed, language-agnostic, no native-ABI fragility.
 
 ## Open decisions
 

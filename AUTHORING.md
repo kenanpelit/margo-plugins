@@ -18,11 +18,13 @@ A plugin widget can:
 - show an icon and/or a label,
 - fill that label from a shell command's output, refreshed on an interval,
 - run a command on left- and right-click,
+- open a **dropdown menu** of command rows on click (see `[[widget.menu]]`),
 - carry a tooltip.
 
-A plugin widget **cannot** (yet) draw arbitrary UI, add menus/popups, or
-contribute settings pages. That's the trade-off for a compiled shell — richer
-plugin tiers (scripting / sandboxed) are on the [roadmap](road_map.md).
+A plugin widget **cannot** (yet) draw arbitrary UI, hold live interactive
+state (toggles/sliders bound to a value), or contribute settings pages. That's
+the trade-off for a compiled shell — richer plugin tiers (sandboxed Rust/WASM)
+are on the [roadmap](road_map.md).
 
 ## Quick start: your own source
 
@@ -123,6 +125,40 @@ vocabulary:
 | `on_click` | string | `""` | Command run via `sh -c` on left-click. |
 | `on_click_right` | string | `""` | Command run via `sh -c` on right-click. |
 | `max_chars` | integer | `0` | Truncate the rendered label to N chars. `0` = no cap. |
+| `[[widget.menu]]` | table array | — | Optional dropdown menu (see below). When present, a left-click opens it instead of running `on_click`. |
+
+### Dropdown menus (`[[widget.menu]]`)
+
+A widget can open a **dropdown menu** on click — a popover of command rows.
+Each row is an icon + label that runs a `sh -c` command and closes the menu.
+This is how "pill + menu of actions" widgets (firewall toggles, container
+controls, …) work without any compiled code.
+
+```toml
+[[widget]]
+key = "ufw"
+icon = "security-high-symbolic"
+exec = "ufw status | head -1 | awk '{print $2}'"
+interval = 10
+
+[[widget.menu]]
+label = "Enable"
+icon = "changes-allow-symbolic"
+exec = "pkexec ufw enable"
+
+[[widget.menu]]
+label = "Disable"
+icon = "changes-prevent-symbolic"
+exec = "pkexec ufw disable"
+
+[[widget.menu]]
+label = "Reload"
+icon = "view-refresh-symbolic"
+exec = "pkexec ufw reload"
+```
+
+Each `[[widget.menu]]` row takes `label`, `icon` (optional), and `exec`. Rows
+run their command via `sh -c` with your privileges, same as `on_click`.
 
 ## The widget model in depth
 
@@ -232,6 +268,8 @@ to see the inline-`exec`, `template`, and `interval` fields in practice.
 
 ## Limitations & what's next
 
-Declarative widgets cover the common status / info / action pills. Arbitrary
-UI, popup menus, and per-plugin settings need the scripting (Lua) or sandboxed
-(WASM) tiers — see the [roadmap](road_map.md).
+Declarative widgets now cover status / info / action pills **and** click
+dropdown menus of command rows. What they still can't do: arbitrary UI, live
+interactive controls (a toggle/slider bound to a value), or per-plugin
+settings pages. Those need the sandboxed **Rust/WASM** tier — see the
+[roadmap](road_map.md).
