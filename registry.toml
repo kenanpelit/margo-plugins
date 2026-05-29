@@ -9,7 +9,7 @@
 [[plugins]]
 id = "network-speed"
 dir = "network-speed"
-version = "1.0.0"
+version = "1.1.0"
 name = "Network Speed"
 min_mshell = "0.8.8"
-description = "Live ↓/↑ network throughput across all interfaces (from /proc/net/dev)."
+description = "Live ↓/↑ network throughput across all interfaces; click for a quick network menu."
