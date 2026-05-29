@@ -1,0 +1,21 @@
+# Source for the {{display_name}} WASM plugin. Built for wasm32-wasip2; the
+# resulting component ships as `plugin.wasm`.
+#
+# Rebuild:  cargo build --target wasm32-wasip2 --release \
+#           && cp target/wasm32-wasip2/release/{{crate_name}}.wasm ./plugin.wasm
+[package]
+name = "{{project-name}}"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { git = "https://github.com/kenanpelit/margo", branch = "main" }
+
+[profile.release]
+opt-level = "s"
+
+[workspace]

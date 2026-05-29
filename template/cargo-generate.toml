@@ -1,0 +1,8 @@
+[template]
+cargo_generate_version = ">=0.20.0"
+
+[placeholders]
+plugin_id = { type = "string", prompt = "Plugin id (kebab-case, no slashes or colons)" }
+display_name = { type = "string", prompt = "Display name" }
+description = { type = "string", prompt = "One-line description" }
+widget_icon = { type = "string", prompt = "Bar pill icon name (freedesktop symbolic)", default = "application-x-addon-symbolic" }

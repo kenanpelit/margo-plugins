@@ -1,0 +1,22 @@
+id = "{{plugin_id}}"
+name = "{{display_name}}"
+version = "0.1.0"
+author = "{{authors}}"
+min_mshell = "0.8.8"
+description = "{{description}}"
+
+# Sandboxed WASM panel (mplugins WASM tier). A wasm-plugins build of mshell
+# renders this in-shell; otherwise the bar pill falls back to the on_click below.
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+[[widget]]
+key = "main"
+icon = "{{widget_icon}}"
+tooltip = "{{display_name}} — click for the in-shell panel."
+exec = "echo {{plugin_id}}"
+template = "{output}"
+interval = 30
+max_chars = 12
+opens_panel = true
+on_click = "notify-send -- '{{display_name}}' 'Open the panel from the pill.'"
