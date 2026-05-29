@@ -1,0 +1,23 @@
+# Source for the Mullvad VPN WASM panel. Built for wasm32-wasip2; the resulting
+# component ships as `plugin.wasm`.
+#
+# Rebuild:  cargo build --target wasm32-wasip2 --release \
+#           && cp target/wasm32-wasip2/release/mullvad.wasm ./plugin.wasm
+#
+# mplugin-sdk path assumes ~/.kod/margo is a sibling of ~/.kod/margo-plugins.
+[package]
+name = "mullvad"
+version = "0.2.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+
+[profile.release]
+opt-level = "s"
+
+[workspace]

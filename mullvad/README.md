@@ -1,23 +1,32 @@
 # mullvad (margo)
 
-Control **Mullvad VPN** from the margo bar — ported from the noctalia-shell
-plugin. A status pill plus a layer-shell control menu.
+**Mullvad VPN** control for the margo shell — a rich in-shell panel, ported from
+the noctalia-shell plugin and built up. WASM plugin (`mplugin-sdk`).
 
-- **Pill:** shows the active relay when connected (e.g. `de-ber-wg-006`), or
-  `off` when disconnected. Polled every 5s.
-- **Menu** (opens as a first-class layer-shell menu): **Connect**,
-  **Disconnect**, **Reconnect**, **Lockdown: On/Off**, **Show status**.
-- **Size & position:** set in this plugin's **gear** (Settings → Plugins →
-  Mullvad VPN) — same controls as any panel/menu plugin.
+- **Pill:** the active relay when connected (e.g. `de-ber-wg-006`), or `off`.
+- **Panel** (layer-shell; size + position from the plugin's gear):
+  - status hero — connected relay + visible location, or disconnected,
+  - **Connect / Disconnect** + **Reconnect**,
+  - **Lockdown mode** and **Auto-connect** toggles,
+  - a **searchable country list** (relay counts) — click a country to connect.
+- **CLI:** `mshellctl menu plugin mullvad` toggles the panel.
 
-This is a declarative plugin (no compiled code): it drives the `mullvad` CLI
-via shell commands, which is exactly what VPN control needs. (A sandboxed WASM
-plugin can't run processes by design, so the CLI control lives in the
-declarative tier.)
+It drives the `mullvad` CLI via the host `run` capability (the same trust level
+as a declarative plugin's shell commands — a sandboxed WASM panel that controls
+a real system tool).
 
 ## Setup
 
-1. Install + connect the **Mullvad** app / CLI (`mullvad account login`, etc.).
-2. Settings → Plugins → install **Mullvad VPN**, enable it, place
-   **Mullvad VPN · vpn** in a bar.
-3. Click the pill for the control menu. Tune its size/position from the gear.
+1. Install + log in to **Mullvad** (`mullvad account login`).
+2. Build mshell with `--features wasm-plugins` (the panel is WASM). Without it,
+   the pill falls back to a `mullvad status` notification.
+3. Settings → Plugins → install **Mullvad VPN**, enable it, place the pill.
+4. Click the pill → the control panel. Tune size/position from the gear.
+
+## Rebuilding `plugin.wasm`
+
+```sh
+cd mullvad
+cargo build --target wasm32-wasip2 --release
+cp target/wasm32-wasip2/release/mullvad.wasm ./plugin.wasm
+```
