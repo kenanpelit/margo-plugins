@@ -26,6 +26,7 @@ exec = "mullvad connect"
 label = "Disconnect"
 icon = "network-offline-symbolic"
 exec = "mullvad disconnect"
+severity = "danger"
 
 [[widget.menu]]
 label = "Reconnect"
@@ -36,6 +37,7 @@ exec = "mullvad reconnect"
 label = "Lockdown: On"
 icon = "changes-prevent-symbolic"
 exec = "mullvad lockdown-mode set on"
+severity = "danger"
 
 [[widget.menu]]
 label = "Lockdown: Off"

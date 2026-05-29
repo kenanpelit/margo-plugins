@@ -38,21 +38,9 @@ fn view_tree() -> El {
             .collect::<Vec<_>>()
     });
     El::vbox(vec![
-        El::hbox(vec![El::button("copy", "Copy chat")]),
         El::scroll(bubbles).with_id("log"),
         El::entry("input", ""),
     ])
-}
-
-/// The whole conversation as plain text, for the clipboard.
-fn conversation_text() -> String {
-    LOG.with(|log| {
-        log.borrow()
-            .iter()
-            .map(|m| format!("{}: {}", m.role, m.text))
-            .collect::<Vec<_>>()
-            .join("\n")
-    })
 }
 
 /// Build the Gemini request body from the conversation so far (excluding the
@@ -116,11 +104,6 @@ impl Component for Assistant {
 
     fn update(ev: Event) -> El {
         match ev.kind {
-            // Copy the whole conversation to the clipboard.
-            EventKind::Click if ev.id == "copy" => {
-                host::copy(&conversation_text());
-                host::notify("Assistant", "Chat copied to clipboard");
-            }
             EventKind::Submit if ev.id == "input" && !ev.value.trim().is_empty() => {
                 LOG.with(|log| {
                     let mut log = log.borrow_mut();
