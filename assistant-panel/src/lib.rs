@@ -21,6 +21,9 @@ thread_local! {
     static LOG: RefCell<Vec<Msg>> = const { RefCell::new(Vec::new()) };
     /// Bytes of the in-flight SSE response not yet split into complete lines.
     static SSE_BUF: RefCell<String> = const { RefCell::new(String::new()) };
+    /// The full raw response body, kept so a non-SSE error (bad key, quota,
+    /// model name) can be surfaced instead of a silent empty reply.
+    static RAW: RefCell<String> = const { RefCell::new(String::new()) };
 }
 
 const DEFAULT_ENDPOINT: &str = "https://generativelanguage.googleapis.com";
@@ -54,6 +57,23 @@ fn request_body() -> String {
             .collect()
     });
     serde_json::json!({ "contents": contents }).to_string()
+}
+
+/// Turn a non-SSE response body into a readable error for the bubble: Gemini's
+/// `{"error":{"message":…}}`, else the raw text (so the user sees *why* there
+/// was no reply instead of silence).
+fn error_from_raw(raw: &str) -> String {
+    let raw = raw.trim();
+    if raw.is_empty() {
+        return "⚠ no response from the API".into();
+    }
+    if let Ok(json) = serde_json::from_str::<serde_json::Value>(raw) {
+        if let Some(msg) = json["error"]["message"].as_str() {
+            return format!("⚠ {msg}");
+        }
+    }
+    let snippet: String = raw.chars().take(300).collect();
+    format!("⚠ {snippet}")
 }
 
 /// Append a completed SSE `data:` payload's text delta to the open ai bubble.
@@ -97,6 +117,7 @@ impl Component for Assistant {
                     });
                 });
                 SSE_BUF.with(|b| b.borrow_mut().clear());
+                RAW.with(|r| r.borrow_mut().clear());
 
                 let endpoint = {
                     let e = host::get_setting("endpoint");
@@ -128,6 +149,7 @@ impl Component for Assistant {
                 });
             }
             EventKind::StreamChunk => {
+                RAW.with(|r| r.borrow_mut().push_str(&ev.value));
                 let lines: Vec<String> = SSE_BUF.with(|b| {
                     let mut buf = b.borrow_mut();
                     buf.push_str(&ev.value);
@@ -146,6 +168,22 @@ impl Component for Assistant {
                 let tail = SSE_BUF.with(|b| std::mem::take(&mut *b.borrow_mut()));
                 if !tail.is_empty() {
                     consume_sse_line(tail.trim_end());
+                }
+                // No text parsed (e.g. a non-SSE error body) → surface why,
+                // rather than leaving a silent empty bubble.
+                let empty = LOG.with(|log| {
+                    log.borrow()
+                        .last()
+                        .map(|m| m.role == "ai" && m.text.is_empty())
+                        .unwrap_or(false)
+                });
+                if empty {
+                    let msg = RAW.with(|r| error_from_raw(&r.borrow()));
+                    LOG.with(|log| {
+                        if let Some(last) = log.borrow_mut().last_mut() {
+                            last.text = msg;
+                        }
+                    });
                 }
             }
             _ => {}

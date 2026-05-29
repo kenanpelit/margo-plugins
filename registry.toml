@@ -17,7 +17,7 @@ description = "Live ↓/↑ network throughput across all interfaces; click for 
 [[plugins]]
 id = "assistant-panel"
 dir = "assistant-panel"
-version = "0.3.0"
+version = "0.3.1"
 name = "Assistant Panel"
 min_mshell = "0.8.8"
 description = "AI assistant (Gemini): set model + API key, click for an in-shell streaming chat panel (wasm-plugins build) or a terminal chat. Needs curl + jq for the fallback."
