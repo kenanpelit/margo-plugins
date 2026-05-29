@@ -111,9 +111,9 @@ fn view_tree() -> El {
     };
 
     let conn = if st.connected {
-        El::button("conn", "Disconnect").class("plugin-action plugin-action-danger")
+        El::button("conn", "Disconnect").class("plugin-action plugin-action-danger plugin-expand")
     } else {
-        El::button("conn", "Connect").class("plugin-action plugin-action-primary")
+        El::button("conn", "Connect").class("plugin-action plugin-action-primary plugin-expand")
     };
 
     let toggle = |id: &str, label: &str, on: bool| {
@@ -144,8 +144,11 @@ fn view_tree() -> El {
 
     El::vbox(vec![
         hero,
-        El::hbox(vec![conn, El::button("reconnect", "Reconnect").class("plugin-action")])
-            .class("plugin-action-row"),
+        El::hbox(vec![
+            conn,
+            El::button("reconnect", "Reconnect").class("plugin-action plugin-expand"),
+        ])
+        .class("plugin-action-row"),
         lockdown,
         autoconnect,
         El::entry("search", &search).class("plugin-search"),
