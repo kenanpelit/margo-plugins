@@ -1,6 +1,6 @@
 id = "mullvad"
 name = "Mullvad VPN"
-version = "0.1.0"
+version = "0.1.1"
 author = "kenanpelit"
 min_mshell = "0.8.8"
 description = "Control Mullvad VPN from the bar — a status pill (active relay, or 'off') plus a layer-shell menu to connect / disconnect / reconnect and toggle lockdown mode. Needs the `mullvad` CLI."

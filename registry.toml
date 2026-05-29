@@ -25,7 +25,7 @@ description = "AI assistant (Gemini): set model + API key, click for an in-shell
 [[plugins]]
 id = "mullvad"
 dir = "mullvad"
-version = "0.1.0"
+version = "0.1.1"
 name = "Mullvad VPN"
 min_mshell = "0.8.8"
 description = "Mullvad VPN: status pill (active relay / off) + a layer-shell menu to connect / disconnect / reconnect and toggle lockdown. Needs the mullvad CLI."
