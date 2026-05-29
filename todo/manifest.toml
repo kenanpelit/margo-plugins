@@ -1,0 +1,21 @@
+id = "todo"
+name = "Todo"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Lightweight task list. Items live in ~/.local/share/mshell/plugins/todo/items.txt via the host's scoped write-file capability — no network, no shell-outs."
+icon = "checkbox-checked-symbolic"
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+[[widget]]
+key = "main"
+icon = "checkbox-checked-symbolic"
+tooltip = "Todo — click for your task list"
+exec = "echo todo"
+template = "{output}"
+interval = 60
+max_chars = 6
+opens_panel = true
+on_click = "notify-send -- Todo 'Open the panel to manage your tasks.'"

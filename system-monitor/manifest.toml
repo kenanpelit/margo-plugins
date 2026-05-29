@@ -1,0 +1,22 @@
+id = "system-monitor"
+name = "System Monitor"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Live RAM / load / disk / uptime + battery + network in a single panel. Reads /proc through the host's `run` capability and pulls battery/network from `system-state`."
+icon = "utilities-system-monitor-symbolic"
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+[[widget]]
+key = "main"
+icon = "utilities-system-monitor-symbolic"
+tooltip = "System monitor — click for the live panel"
+# Pill label: RAM used / total, refreshed every 10 s.
+exec = "awk '/^MemTotal:/{t=$2} /^MemAvailable:/{a=$2} END{printf \"%d%%\", (t-a)*100/t}' /proc/meminfo"
+template = "{output}"
+interval = 10
+max_chars = 6
+opens_panel = true
+on_click = "notify-send -- 'System Monitor' \"$(uptime)\""

@@ -1,0 +1,22 @@
+# First-party todo plugin — local task list backed by the host's scoped
+# write-file capability. No network, no shell-outs.
+[package]
+name = "todo"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[workspace]

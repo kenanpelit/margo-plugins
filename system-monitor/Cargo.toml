@@ -1,0 +1,23 @@
+# First-party system-monitor plugin — RAM / load / disk / uptime in a
+# matugen-themed panel. Reads /proc through `host::run`, uses the new
+# `system-state` host capability for battery + network.
+[package]
+name = "system-monitor"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[workspace]

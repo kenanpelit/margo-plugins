@@ -16,6 +16,10 @@ crate-type = ["cdylib"]
 mplugin-sdk = { git = "https://github.com/kenanpelit/margo", branch = "main" }
 
 [profile.release]
-opt-level = "s"
+opt-level = "z"      # Smaller than "s" — the SDK is generic enough that the
+lto = "fat"          # extra optimiser passes shrink the wasm meaningfully.
+codegen-units = 1
+panic = "abort"
+strip = true
 
 [workspace]

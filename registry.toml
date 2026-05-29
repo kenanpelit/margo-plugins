@@ -37,3 +37,22 @@ version = "0.1.0"
 name = "Demo Kit"
 min_mshell = "0.8.8"
 description = "Reference plugin exercising every node kind and host capability the WASM tier ships. Install it to see what plugins can do — and read its source as a guided tour of mplugin-sdk."
+icon = "applications-engineering-symbolic"
+
+[[plugins]]
+id = "system-monitor"
+dir = "system-monitor"
+version = "0.1.0"
+name = "System Monitor"
+min_mshell = "0.8.8"
+description = "Live RAM / load / disk / uptime + battery + network in a single panel. Reads /proc through the host's `run` capability and pulls battery/network from `system-state`."
+icon = "utilities-system-monitor-symbolic"
+
+[[plugins]]
+id = "todo"
+dir = "todo"
+version = "0.1.0"
+name = "Todo"
+min_mshell = "0.8.8"
+description = "Lightweight task list. Items live in the plugin's data dir via the host's scoped write-file capability — no network, no shell-outs."
+icon = "checkbox-checked-symbolic"

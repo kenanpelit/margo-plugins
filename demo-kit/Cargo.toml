@@ -17,6 +17,10 @@ crate-type = ["cdylib"]
 mplugin-sdk = { path = "../../margo/mplugin-sdk" }
 
 [profile.release]
-opt-level = "s"
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
 
 [workspace]

@@ -1,0 +1,1 @@
+/repo/archive/.kod/margo-plugins/system-monitor/target/wasm32-wasip2/release/system_monitor.wasm: /repo/archive/.kod/margo/mplugin-sdk/src/lib.rs /repo/archive/.kod/margo/mplugin-sdk/wit/world.wit /repo/archive/.kod/margo-plugins/system-monitor/src/lib.rs
