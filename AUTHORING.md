@@ -177,8 +177,9 @@ command.
 
 Bump `version` (in both `manifest.toml` and the `registry.toml` entry) on every
 change. Set `min_mshell` if your widget needs behaviour from a specific mshell
-release; it's recorded so the manager can warn / hold back the plugin on older
-shells (compatibility gating is still being wired up).
+release: a shell older than `min_mshell` won't offer an **Install** button
+(it shows "needs mshell ≥ x.y.z" instead) and refuses the install outright.
+Leave it empty for "any version".
 
 ## Security & trust
 
