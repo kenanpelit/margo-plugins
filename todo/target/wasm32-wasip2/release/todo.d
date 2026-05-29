@@ -1,1 +1,0 @@
-/repo/archive/.kod/margo-plugins/todo/target/wasm32-wasip2/release/todo.wasm: /repo/archive/.kod/margo/mplugin-sdk/src/lib.rs /repo/archive/.kod/margo/mplugin-sdk/wit/world.wit /repo/archive/.kod/margo-plugins/todo/src/lib.rs
