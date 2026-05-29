@@ -100,33 +100,32 @@ fn view_tree() -> El {
 
     let hero = if st.connected {
         El::markdown(format!("**🔒 {}** — `{}`\n{}", st.state, st.relay, st.location))
+            .class("plugin-hero plugin-hero-on")
     } else {
         let loc = if st.location.is_empty() {
             String::new()
         } else {
             format!("\n{}", st.location)
         };
-        El::markdown(format!("**🔓 {}**{}", st.state, loc))
+        El::markdown(format!("**🔓 {}**{}", st.state, loc)).class("plugin-hero")
     };
 
-    let conn = El::button("conn", if st.connected { "Disconnect" } else { "Connect" });
+    let conn = if st.connected {
+        El::button("conn", "Disconnect").class("plugin-action plugin-action-danger")
+    } else {
+        El::button("conn", "Connect").class("plugin-action plugin-action-primary")
+    };
 
-    let lockdown = El::button(
-        "lockdown",
-        if setting_on("lockdown-mode") {
-            "Lockdown mode: ON"
-        } else {
-            "Lockdown mode: off"
-        },
-    );
-    let autoconnect = El::button(
-        "autoconnect",
-        if setting_on("auto-connect") {
-            "Auto-connect: ON"
-        } else {
-            "Auto-connect: off"
-        },
-    );
+    let toggle = |id: &str, label: &str, on: bool| {
+        El::button(id, format!("{label}  ·  {}", if on { "On" } else { "Off" }))
+            .class(if on {
+                "plugin-toggle plugin-toggle-on"
+            } else {
+                "plugin-toggle"
+            })
+    };
+    let lockdown = toggle("lockdown", "Lockdown mode", setting_on("lockdown-mode"));
+    let autoconnect = toggle("autoconnect", "Auto-connect", setting_on("auto-connect"));
 
     let needle = search.to_lowercase();
     let rows: Vec<El> = COUNTRIES.with(|c| {
@@ -138,20 +137,21 @@ fn view_tree() -> El {
                     || code.contains(&needle)
             })
             .map(|(name, code, count)| {
-                El::button(format!("c:{code}"), format!("{name}  ·  {count}"))
+                El::button(format!("c:{code}"), format!("{name}  ·  {count}")).class("plugin-row")
             })
             .collect()
     });
 
     El::vbox(vec![
         hero,
-        conn,
-        El::button("reconnect", "Reconnect"),
+        El::hbox(vec![conn, El::button("reconnect", "Reconnect").class("plugin-action")])
+            .class("plugin-action-row"),
         lockdown,
         autoconnect,
-        El::entry("search", &search),
-        El::scroll(rows).with_id("countries"),
+        El::entry("search", &search).class("plugin-search"),
+        El::scroll(rows).with_id("countries").class("plugin-list"),
     ])
+    .class("plugin-panel-body")
 }
 
 impl Component for Mullvad {
