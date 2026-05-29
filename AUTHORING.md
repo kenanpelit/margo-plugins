@@ -235,6 +235,16 @@ on_click = "my-ai --provider {{provider}} --key {{api_key}}"
 `on_click`, `on_click_right`, and every menu row. Unset settings fall back to
 `default`. Unknown placeholders are left untouched.
 
+**Built-in `{{plugin_dir}}`** always resolves to the plugin's install folder,
+so you can ship and run a script bundled with the plugin:
+
+```toml
+on_click = "kitty -e sh {{plugin_dir}}/chat.sh {{model}}"
+```
+
+(See the `assistant-panel` plugin for a working example — a bundled `chat.sh`
+driven by the `model` + `api_key` settings.)
+
 > **Secrets:** values live in `~/.config/margo/mshell/plugins.toml` (written
 > `0600`). It's not OS keyring storage — treat it like a dotfile holding a
 > token, and don't commit it.

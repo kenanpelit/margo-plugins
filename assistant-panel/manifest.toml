@@ -1,28 +1,23 @@
 id = "assistant-panel"
 name = "Assistant Panel"
-version = "0.1.0"
+version = "0.2.0"
 author = "kenanpelit"
 min_mshell = "0.8.8"
-description = "AI assistant launcher. Configure provider / model / API key here; the pill opens a chat in your terminal. (Declarative port — the in-shell chat panel awaits the WASM tier.)"
+description = "AI assistant (Google Gemini). Set your model + API key here; click the pill to chat in your terminal. Needs curl + jq."
 
-# Settings flow into the commands below via {{key}}. The API key is a `secret`
-# (masked entry, stored 0600).
-[[setting]]
-key = "provider"
-label = "Provider"
-type = "choice"
-choices = ["openai", "google", "anthropic", "ollama"]
-default = "openai"
-
+# Settings flow into the launch command via {{key}}; api_key is a `secret`
+# (masked, stored 0600). `{{plugin_dir}}` is the built-in install path, so the
+# pill runs the bundled chat.sh.
 [[setting]]
 key = "model"
 label = "Model"
-type = "string"
-default = "gpt-4o-mini"
+type = "choice"
+choices = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"]
+default = "gemini-2.5-flash"
 
 [[setting]]
 key = "api_key"
-label = "API Key"
+label = "Gemini API Key"
 type = "secret"
 
 [[setting]]
@@ -34,17 +29,15 @@ default = "kitty"
 [[widget]]
 key = "assistant"
 icon = "starred-symbolic"
-tooltip = "AI assistant — click to chat"
-# Opens an interactive AI chat in a terminal, configured from the settings.
-# Uses `aichat` (https://github.com/sigoden/aichat); adapt for your CLI/provider.
-on_click = "{{terminal}} -e env OPENAI_API_KEY={{api_key}} aichat -m {{provider}}:{{model}}"
+tooltip = "AI assistant — click to chat (Gemini)"
+on_click = "{{terminal}} -e env GEMINI_API_KEY={{api_key}} sh {{plugin_dir}}/chat.sh {{model}}"
 
 [[widget.menu]]
 label = "Chat"
 icon = "chat-symbolic"
-exec = "{{terminal}} -e env OPENAI_API_KEY={{api_key}} aichat -m {{provider}}:{{model}}"
+exec = "{{terminal}} -e env GEMINI_API_KEY={{api_key}} sh {{plugin_dir}}/chat.sh {{model}}"
 
 [[widget.menu]]
 label = "Show config"
 icon = "dialog-information-symbolic"
-exec = "notify-send Assistant 'provider={{provider}} · model={{model}}'"
+exec = "notify-send Assistant 'model={{model}}'"
