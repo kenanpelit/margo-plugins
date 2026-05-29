@@ -1,13 +1,18 @@
 id = "assistant-panel"
 name = "Assistant Panel"
-version = "0.2.0"
+version = "0.3.0"
 author = "kenanpelit"
 min_mshell = "0.8.8"
-description = "AI assistant (Google Gemini). Set your model + API key here; click the pill to chat in your terminal. Needs curl + jq."
+description = "AI assistant (Google Gemini). Set model + API key here; click the pill for an in-shell streaming chat panel (on a wasm-plugins build) — otherwise a terminal chat. Needs curl + jq for the terminal fallback."
 
-# Settings flow into the launch command via {{key}}; api_key is a `secret`
-# (masked, stored 0600). `{{plugin_dir}}` is the built-in install path, so the
-# pill runs the bundled chat.sh.
+# Sandboxed WASM chat panel (the mplugins WASM tier). A `wasm-plugins` build of
+# mshell renders this in-shell; older / standard builds ignore it and fall back
+# to the terminal `on_click` below.
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+# Settings flow into both the WASM panel (via get-setting) and the terminal
+# command (via {{key}}); api_key is a `secret` (masked, stored 0600).
 [[setting]]
 key = "model"
 label = "Model"
@@ -21,8 +26,15 @@ label = "Gemini API Key"
 type = "secret"
 
 [[setting]]
+key = "endpoint"
+label = "API Endpoint (optional)"
+type = "string"
+default = ""
+description = "Override the Gemini base URL (e.g. a proxy). Blank = Google."
+
+[[setting]]
 key = "terminal"
-label = "Terminal"
+label = "Terminal (fallback)"
 type = "string"
 default = "kitty"
 
@@ -30,14 +42,7 @@ default = "kitty"
 key = "assistant"
 icon = "starred-symbolic"
 tooltip = "AI assistant — click to chat (Gemini)"
+# In-shell panel on a wasm-plugins build; this terminal command is the fallback
+# everywhere else.
+opens_panel = true
 on_click = "{{terminal}} -e env GEMINI_API_KEY={{api_key}} sh {{plugin_dir}}/chat.sh {{model}}"
-
-[[widget.menu]]
-label = "Chat"
-icon = "chat-symbolic"
-exec = "{{terminal}} -e env GEMINI_API_KEY={{api_key}} sh {{plugin_dir}}/chat.sh {{model}}"
-
-[[widget.menu]]
-label = "Show config"
-icon = "dialog-information-symbolic"
-exec = "notify-send Assistant 'model={{model}}'"

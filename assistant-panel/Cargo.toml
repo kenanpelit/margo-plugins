@@ -1,0 +1,25 @@
+# Source for the assistant-panel WASM chat. Built for wasm32-wasip2; the
+# resulting component is shipped as `plugin.wasm` (the manifest `entry`).
+#
+# Rebuild:  cargo build --target wasm32-wasip2 --release \
+#           && cp target/wasm32-wasip2/release/assistant_panel.wasm ../plugin.wasm
+#
+# The mplugin-sdk path assumes the margo repo is a sibling of margo-plugins
+# (~/.kod/margo and ~/.kod/margo-plugins). Adjust if your layout differs.
+[package]
+name = "assistant-panel"
+version = "0.3.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+serde_json = "1"
+
+[profile.release]
+opt-level = "s"
+
+[workspace]
