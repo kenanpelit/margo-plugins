@@ -2,7 +2,11 @@
 
 Community widget plugins for the [margo](https://github.com/kenanpelit/margo)
 desktop shell (**mshell**) — add this repo as a *source* in
-**Settings → Widgets → Plugins** and install widgets straight from the shell.
+**Settings → Plugins** and install widgets straight from the shell.
+
+> **Writing a plugin?** See **[AUTHORING.md](AUTHORING.md)** for the full
+> manifest/registry spec, the widget model, security notes, and how to publish
+> your own source.
 
 > **Status:** the mshell plugin manager is in development. This repository
 > defines the source/registry layout that the manager consumes; the format
@@ -19,9 +23,9 @@ that mshell renders with its built-in custom-widget engine.
 
 To use this source:
 
-1. Open **Settings → Widgets → Plugins → Sources** and add this repo's URL.
+1. Open **Settings → Plugins → Sources** and add this repo's URL.
 2. Browse **Available**, install a plugin, then enable it.
-3. Place its widget into a bar slot like any other widget.
+3. Place its widget into a bar slot from **Settings → Bar → add widget**.
 
 ## Repository layout
 
@@ -68,6 +72,8 @@ on_click = "xdg-open https://wttr.in/Istanbul"   # optional left-click command
 ```
 
 ## Contributing a plugin
+
+See **[AUTHORING.md](AUTHORING.md)** for the full guide. In short:
 
 1. Add a `<plugin-id>/` folder with a `manifest.toml` (and any `assets/`).
 2. Add a matching `[[plugins]]` entry to `registry.toml`.
