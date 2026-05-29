@@ -1,0 +1,48 @@
+id = "mullvad"
+name = "Mullvad VPN"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Control Mullvad VPN from the bar — a status pill (active relay, or 'off') plus a layer-shell menu to connect / disconnect / reconnect and toggle lockdown mode. Needs the `mullvad` CLI."
+
+# Status pill: the active relay when connected, else "off". Polled every 5s.
+# Clicking opens the control menu (rendered as a first-class layer-shell menu;
+# its size + position are set in this plugin's gear).
+[[widget]]
+key = "vpn"
+icon = "network-vpn-symbolic"
+tooltip = "Mullvad VPN — click for controls"
+exec = "mullvad status 2>/dev/null | awk 'NR==1{c=($1==\"Connected\")} /Relay:/{r=$2} END{print (c ? r : \"off\")}'"
+template = "{output}"
+interval = 5
+max_chars = 22
+
+[[widget.menu]]
+label = "Connect"
+icon = "network-vpn-symbolic"
+exec = "mullvad connect"
+
+[[widget.menu]]
+label = "Disconnect"
+icon = "network-offline-symbolic"
+exec = "mullvad disconnect"
+
+[[widget.menu]]
+label = "Reconnect"
+icon = "view-refresh-symbolic"
+exec = "mullvad reconnect"
+
+[[widget.menu]]
+label = "Lockdown: On"
+icon = "changes-prevent-symbolic"
+exec = "mullvad lockdown-mode set on"
+
+[[widget.menu]]
+label = "Lockdown: Off"
+icon = "changes-allow-symbolic"
+exec = "mullvad lockdown-mode set off"
+
+[[widget.menu]]
+label = "Show status"
+icon = "dialog-information-symbolic"
+exec = "notify-send -- Mullvad \"$(mullvad status 2>/dev/null)\""
