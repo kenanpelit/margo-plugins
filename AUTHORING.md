@@ -19,6 +19,8 @@ A plugin widget can:
 - fill that label from a shell command's output, refreshed on an interval,
 - run a command on left- and right-click,
 - open a **dropdown menu** of command rows on click (see `[[widget.menu]]`),
+- expose user **settings** (text / secret / number / bool / choice) that fill
+  into its commands via `{{placeholders}}` (see Settings),
 - carry a tooltip.
 
 A plugin widget **cannot** (yet) draw arbitrary UI, hold live interactive
@@ -194,6 +196,48 @@ in your plugin's `assets/` and point `image` at it (relative path).
 commands. The shell env is the systemd user session — it does **not** inherit
 your interactive shell rc, so set any needed env vars explicitly in the
 command.
+
+## Settings & `{{placeholders}}`
+
+A plugin can declare user-configurable **settings**. Each value is filled in
+by the user (Settings → Plugins → the gear on an installed plugin) and
+substituted into the plugin's commands via `{{key}}` placeholders — so one
+plugin works for everyone without editing the manifest.
+
+```toml
+[[setting]]
+key = "api_key"
+label = "API Key"
+type = "secret"          # masked entry; stored owner-only (0600)
+
+[[setting]]
+key = "provider"
+label = "Provider"
+type = "choice"
+choices = ["google", "openai"]
+default = "google"
+
+[[widget]]
+key = "assistant"
+icon = "starred-symbolic"
+on_click = "my-ai --provider {{provider}} --key {{api_key}}"
+```
+
+| `type` | Control | Notes |
+|---|---|---|
+| `string` (default) | text entry | applied on Enter / focus-out |
+| `secret` | masked entry | for API keys/tokens; values kept in a `0600` file |
+| `number` | numeric entry | stored as text |
+| `bool` | switch | substitutes `true` / `false` |
+| `choice` | dropdown | requires `choices = [...]` |
+
+`{{key}}` placeholders are substituted in `label`, `template`, `exec`,
+`on_click`, `on_click_right`, and every menu row. Unset settings fall back to
+`default`. Unknown placeholders are left untouched.
+
+> **Secrets:** values live in `~/.config/margo/mshell/plugins.toml` (written
+> `0600`). It's not OS keyring storage — treat it like a dotfile holding a
+> token, and don't commit it.
 
 ## Naming & placement
 

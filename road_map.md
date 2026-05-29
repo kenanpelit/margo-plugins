@@ -67,11 +67,18 @@ widget.
 - [ ] Publish the first real plugins in this repo + flesh out `registry.toml`
 - [ ] End-to-end docs (authoring, publishing, installing)
 
-### M5a — Declarative menus ✅
+### M5a — Declarative menus + settings ✅
 - [x] `[[widget.menu]]` spec: a click-popover of command rows (icon + label →
       `sh -c`), rendered from manifest data. Unblocks "pill + actions menu"
       widgets (firewall, containers, …) with no compiled code.
+- [x] `[[setting]]` spec: per-plugin user settings (string / **secret** /
+      number / bool / choice) with a gear → inline form in Settings; values
+      substitute into commands via `{{key}}` (secrets stored `0600`).
 - [ ] Richer rows — toggles/sliders bound to live state (needs the WASM tier)
+
+> The declarative tier is now feature-complete: pill + label/exec + menus +
+> settings. Anything beyond this (arbitrary/interactive UI, the assistant
+> *panel*) is the WASM tier below.
 
 ### M5b — Sandboxed Rust/WASM plugins (chosen scripting tier)
 - [ ] Embed a wasm runtime (wasmtime) + a host API for building widgets/menus
