@@ -130,6 +130,27 @@ fn controls_pane() -> El {
                         },
                     ],
                 ),
+                section("Live system snapshot", {
+                    let sys = host::system_state();
+                    let media = host::media_now_playing();
+                    let battery = if sys.battery_pct == 255 {
+                        "no battery".to_string()
+                    } else {
+                        format!("{}% · {}", sys.battery_pct, sys.battery_status)
+                    };
+                    let track = if media.title.trim().is_empty() {
+                        "no media".to_string()
+                    } else if media.artist.trim().is_empty() {
+                        media.title.clone()
+                    } else {
+                        format!("{} — {}", media.title, media.artist)
+                    };
+                    vec![
+                        El::markdown(format!("**Battery:** {battery}")),
+                        El::markdown(format!("**Now playing ({}):** {track}", media.status)),
+                        El::button("refresh-sys", "Refresh snapshot").hexpand(true),
+                    ]
+                }),
             ])
             .spacing(8),
         )
@@ -207,6 +228,7 @@ impl Component for DemoKit {
                     let mut s = s.borrow_mut();
                     *s = !*s;
                 }),
+                "refresh-sys" => { /* view() re-reads everything */ }
                 "save" => {
                     let v = VOLUME.with(|v| *v.borrow()) as u32;
                     SAVED.with(|s| *s.borrow_mut() = v);
