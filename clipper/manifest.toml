@@ -1,0 +1,38 @@
+id = "clipper"
+name = "Clipper"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Clipboard manager on top of cliphist: searchable history (text + images), one-click copy, optional auto-paste, per-entry delete, clear-all, and pinned items that survive history rotation. In-shell panel. Needs cliphist + wl-clipboard (wtype for auto-paste)."
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+# Suggested global hotkey: Super+V opens the clipboard panel.
+[[keybind]]
+combo       = "super,v"
+id          = "open"
+description = "Open the clipboard manager."
+
+# ── Settings ────────────────────────────────────────────────────────────────
+[[setting]]
+key = "max_items"
+label = "History items shown"
+type = "string"
+default = "60"
+description = "How many recent clips to list (search still scans the full history)."
+
+[[setting]]
+key = "auto_paste"
+label = "Auto-paste on select"
+type = "choice"
+choices = ["no", "yes"]
+default = "no"
+description = "After copying, simulate Ctrl+V into the focused window (needs wtype)."
+
+# ── Bar pill ────────────────────────────────────────────────────────────────
+[[widget]]
+key = "clipboard"
+icon = "edit-paste-symbolic"
+tooltip = "Clipboard — history, search, pins"
+opens_panel = true
