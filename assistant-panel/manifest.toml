@@ -1,9 +1,9 @@
 id = "assistant-panel"
 name = "Assistant Panel"
-version = "0.3.3"
+version = "0.4.0"
 author = "kenanpelit"
 min_mshell = "0.8.8"
-description = "AI assistant (Google Gemini). Set model + API key here; click the pill for an in-shell streaming chat panel (on a wasm-plugins build) — otherwise a terminal chat. Needs curl + jq for the terminal fallback."
+description = "Multi-provider AI chat (Gemini, OpenAI-compatible, Anthropic, Ollama, custom). Streaming, markdown, persistent history, header actions (Stop / Retry / Copy / New). On a non-wasm-plugins build it falls back to a terminal chat (curl + jq)."
 
 # Sandboxed WASM chat panel (the mplugins WASM tier). A `wasm-plugins` build of
 # mshell renders this in-shell; older / standard builds ignore it and fall back
@@ -11,34 +11,70 @@ description = "AI assistant (Google Gemini). Set model + API key here; click the
 entry = "plugin.wasm"
 entry_kind = "wasm"
 
-# Suggested global hotkey: Super+A opens the panel and focuses the chat
-# input. mshell writes this binding to ~/.config/margo/binds.d/mshell-plugins.conf
-# on enable; conflict resolution is deterministic (alphabetical plugin id).
+# Suggested global hotkey: Super+A opens the panel and focuses the chat input.
 [[keybind]]
 combo       = "super,a"
 id          = "open"
 description = "Open the assistant panel and focus the chat input."
 
-# Settings flow into both the WASM panel (via get-setting) and the terminal
-# command (via {{key}}); api_key is a `secret` (masked, stored 0600).
+# ── Settings ────────────────────────────────────────────────────────────────
+# All values flow to the WASM panel via `host::get_setting`. `api_key` is a
+# `secret` (masked, stored in the keyring-backed secret store).
+
+[[setting]]
+key = "provider"
+label = "Provider"
+type = "choice"
+choices = ["gemini", "openai", "anthropic", "ollama", "custom"]
+default = "gemini"
+
 [[setting]]
 key = "model"
 label = "Model"
-type = "choice"
-choices = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"]
+type = "string"
 default = "gemini-2.5-flash"
+description = "Provider-specific model id. Examples: gemini-2.5-flash · gpt-4o-mini · claude-sonnet-4-5-20250929 · llama3 · qwen2.5"
 
 [[setting]]
 key = "api_key"
-label = "Gemini API Key"
+label = "API Key"
 type = "secret"
+description = "Provider API key. Stored in the keyring. Not required for Ollama or local custom endpoints."
 
 [[setting]]
 key = "endpoint"
-label = "API Endpoint (optional)"
+label = "Endpoint override"
 type = "string"
 default = ""
-description = "Override the Gemini base URL (e.g. a proxy). Blank = Google."
+description = "Override the provider base URL (proxy, LocalAI, LM Studio, vLLM). Blank = provider default."
+
+[[setting]]
+key = "temperature"
+label = "Temperature (0.0–2.0)"
+type = "string"
+default = "0.7"
+description = "Lower = focused / deterministic. Higher = creative."
+
+[[setting]]
+key = "max_tokens"
+label = "Max tokens"
+type = "string"
+default = "2048"
+
+[[setting]]
+key = "system_prompt"
+label = "System prompt"
+type = "string"
+default = ""
+description = "Optional system message prepended to every conversation."
+
+[[setting]]
+key = "persist_history"
+label = "Persist history"
+type = "choice"
+choices = ["yes", "no"]
+default = "yes"
+description = "Save the conversation across restarts. Cleared on provider change."
 
 [[setting]]
 key = "terminal"
@@ -46,11 +82,11 @@ label = "Terminal (fallback)"
 type = "string"
 default = "kitty"
 
+# ── Bar pill ────────────────────────────────────────────────────────────────
 [[widget]]
 key = "assistant"
 icon = "starred-symbolic"
-tooltip = "AI assistant — click to chat (Gemini)"
-# In-shell panel on a wasm-plugins build; this terminal command is the fallback
-# everywhere else.
+tooltip = "AI assistant — click to chat"
 opens_panel = true
+# Terminal fallback for non-wasm-plugins builds (curl + jq, Gemini-only).
 on_click = "{{terminal}} -e env GEMINI_API_KEY={{api_key}} sh {{plugin_dir}}/chat.sh {{model}}"
