@@ -1,0 +1,52 @@
+id = "musiclyrics"
+name = "Music Lyrics"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Time-synced lyrics for whatever's playing (MPRIS). Fetches from lrclib.net, caches locally, and highlights the current line live as the song plays. The bar pill can show the current line. In-shell panel."
+
+# Sandboxed WASM panel (the mplugins WASM tier).
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+# Suggested global hotkey: Super+Shift+L opens the lyrics panel.
+[[keybind]]
+combo       = "super+shift,l"
+id          = "open"
+description = "Open the music lyrics panel."
+
+# ── Settings ────────────────────────────────────────────────────────────────
+[[setting]]
+key = "offset_ms"
+label = "Sync offset (ms)"
+type = "string"
+default = "0"
+description = "Nudge the highlighted line earlier (negative) or later (positive) if your player reports position slightly off."
+
+[[setting]]
+key = "cache"
+label = "Cache lyrics"
+type = "choice"
+choices = ["yes", "no"]
+default = "yes"
+description = "Save fetched lyrics under the plugin's data dir to avoid re-fetching."
+
+[[setting]]
+key = "pill_line"
+label = "Show line in bar pill"
+type = "choice"
+choices = ["yes", "no"]
+default = "yes"
+description = "Write the current line to a file the bar pill displays (active after the panel has been opened once)."
+
+# ── Bar pill ────────────────────────────────────────────────────────────────
+[[widget]]
+key = "lyrics"
+icon = "audio-x-generic-symbolic"
+tooltip = "Music lyrics — click for synced lyrics"
+opens_panel = true
+# Live current line, written by the panel to the data dir each tick.
+exec = "sh -c 'cat \"${XDG_DATA_HOME:-$HOME/.local/share}/mshell/plugins/musiclyrics/line.txt\" 2>/dev/null'"
+template = "{output}"
+interval = 2
+max_chars = 36
