@@ -208,23 +208,20 @@ fn sanitize_name(name: &str) -> String {
 
 fn token_row(key: &str, label: &str, value: &str) -> El {
     El::hbox(vec![
-        El::label(label).halign("start").prop("width", "180"),
+        El::color_swatch(value, 28).valign("center"),
+        El::label(label).halign("start").prop("width", "160"),
         El::entry(format!("hex:{key}"), value)
             .class("plugin-search")
             .prop("width", "180"),
-        El::label(value.to_string())
-            .class("dim-label")
-            .halign("end")
-            .prop("width", "120"),
     ])
-    .spacing(8)
+    .spacing(10)
     .padding(4)
     .class("plugin-bar-row")
 }
 
 fn preset_row(name: &str) -> El {
     El::hbox(vec![
-        El::image("preferences-desktop-color-symbolic"),
+        El::image("color-select-symbolic"),
         El::label(name.to_string()).halign("start").hexpand(true),
         El::button(format!("apply:{name}"), "Apply")
             .class("plugin-action plugin-action-primary"),
@@ -246,7 +243,7 @@ fn view_tree() -> El {
     let status = STATUS.with(|s| s.borrow().clone());
 
     let header = El::hbox(vec![
-        El::image("preferences-desktop-color-symbolic"),
+        El::image("color-select-symbolic"),
         El::label("Color Scheme Creator")
             .hexpand(true)
             .halign("start"),
