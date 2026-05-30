@@ -196,12 +196,20 @@ fn view_tree() -> El {
         .class("plugin-panel-large");
     }
 
+    // Title + artist stay full-strength regardless of play state (no fading on
+    // pause/stop); the album line is the only secondary text.
     let mut meta = vec![
         El::label(m.title.clone()).class("label-large-bold").halign("center"),
-        El::label(m.artist.clone()).class("dim-label").halign("center"),
+        El::label(m.artist.clone()).class("label-medium-bold").halign("center"),
     ];
     if !m.album.trim().is_empty() {
         meta.push(El::label(m.album.clone()).class("dim-label").halign("center"));
+    }
+    // Communicate a non-playing state with an explicit badge instead of dimming.
+    if m.status == "paused" {
+        meta.push(El::label("Paused").class("plugin-status-badge").halign("center"));
+    } else if m.status == "stopped" {
+        meta.push(El::label("Stopped").class("plugin-status-badge").halign("center"));
     }
 
     El::vbox(vec![

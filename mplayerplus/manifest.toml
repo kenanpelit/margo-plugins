@@ -1,6 +1,6 @@
 id = "mplayerplus"
 name = "Media Player Plus"
-version = "0.2.0"
+version = "0.3.0"
 author = "kenanpelit"
 min_mshell = "0.8.8"
 description = "A full media player panel for whatever's playing (MPRIS): album art, live progress, play/pause, prev/next, ±10s seek, shuffle & repeat. Controls the active player via playerctl. In-shell panel."
@@ -35,9 +35,14 @@ default = "yes"
 [[widget]]
 key = "player"
 icon = "audio-x-generic-symbolic"
-tooltip = "Media player — play / pause / seek"
+tooltip = "Media player — left-click to open · right-click to play/pause"
 opens_panel = true
+# Live album art (line 1 of the helper) + "title — artist" (line 2). `art`
+# makes the leading image follow the helper's first line, reloaded each poll.
 exec = "sh {{plugin_dir}}/nowplaying.sh"
 template = "{output}"
+art = true
 interval = 3
 max_chars = 32
+# Right-click toggles playback (targets the active player).
+on_click_right = "playerctl play-pause"
