@@ -17,7 +17,7 @@ description = "Live ↓/↑ network throughput across all interfaces; click for 
 [[plugins]]
 id = "breathing"
 dir = "breathing"
-version = "0.1.2"
+version = "0.1.3"
 name = "Breathing"
 min_mshell = "0.8.8"
 description = "Guided breathing exercises for calm & focus — 6 techniques (Deep, 4-7-8, Box, Equal, Resonance, Alternate Nostril) with a live breathing orb, phase coaching, and a duration timer. In-shell panel; optional chime cues need paplay."
@@ -31,6 +31,15 @@ name = "Ambient Sound"
 min_mshell = "0.8.8"
 description = "Ambient soundscapes for focus & sleep — 14 looping sounds (rain, storm, waves, fireplace, coffee shop, …) you can mix, save as presets, and auto-stop with a sleep timer (Stop / Lock / Suspend). In-shell mixer panel. Needs mpv + socat."
 icon = "audio-headphones-symbolic"
+
+[[plugins]]
+id = "mplayerplus"
+dir = "mplayerplus"
+version = "0.1.0"
+name = "Media Player Plus"
+min_mshell = "0.8.8"
+description = "A full media player panel for whatever's playing (MPRIS): album art, live progress, play/pause, prev/next, ±10s seek, shuffle & repeat. Controls the active player via playerctl. In-shell panel."
+icon = "audio-x-generic-symbolic"
 
 [[plugins]]
 id = "musiclyrics"

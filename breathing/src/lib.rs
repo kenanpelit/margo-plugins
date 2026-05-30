@@ -306,7 +306,8 @@ fn selector_view() -> El {
         El::grid(6, dur_chips).spacing(6),
         El::button("start", "Start session")
             .prop("icon", "media-playback-start-symbolic")
-            .class("plugin-action plugin-action-primary plugin-expand"),
+            .class("plugin-action plugin-action-primary plugin-expand")
+            .hexpand(true),
     ])
     .spacing(14)])
     .vexpand(true)
@@ -354,10 +355,12 @@ fn exercise_view() -> El {
         El::hbox(vec![
             El::button("pause", if paused { "Resume" } else { "Pause" })
                 .prop("icon", if paused { "media-playback-start-symbolic" } else { "media-playback-pause-symbolic" })
-                .class("plugin-action plugin-expand"),
+                .class("plugin-action plugin-expand")
+                .hexpand(true),
             El::button("stop", "End")
                 .prop("icon", "media-playback-stop-symbolic")
-                .class("plugin-action plugin-action-danger plugin-expand"),
+                .class("plugin-action plugin-action-danger plugin-expand")
+                .hexpand(true),
         ])
         .spacing(8),
     ])

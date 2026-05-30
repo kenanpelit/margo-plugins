@@ -1,0 +1,37 @@
+id = "mplayerplus"
+name = "Media Player Plus"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "A full media player panel for whatever's playing (MPRIS): album art, live progress, play/pause, prev/next, ±10s seek, shuffle & repeat. Controls the active player via playerctl. In-shell panel."
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+# Suggested global hotkey: Super+Shift+M opens the player panel.
+[[keybind]]
+combo       = "super+shift,m"
+id          = "open"
+description = "Open the media player panel."
+
+# ── Settings ────────────────────────────────────────────────────────────────
+[[setting]]
+key = "seek_step"
+label = "Seek step (seconds)"
+type = "string"
+default = "10"
+description = "How far the ⏪ / ⏩ buttons jump."
+
+[[setting]]
+key = "show_art"
+label = "Show album art"
+type = "choice"
+choices = ["yes", "no"]
+default = "yes"
+
+# ── Bar pill ────────────────────────────────────────────────────────────────
+[[widget]]
+key = "player"
+icon = "audio-x-generic-symbolic"
+tooltip = "Media player — play / pause / seek"
+opens_panel = true
