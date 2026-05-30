@@ -306,7 +306,7 @@ fn selector_view() -> El {
         El::grid(6, dur_chips).spacing(6),
         El::button("start", "Start session")
             .prop("icon", "media-playback-start-symbolic")
-            .class("plugin-action plugin-action-primary"),
+            .class("plugin-action plugin-action-primary plugin-expand"),
     ])
     .spacing(14)])
     .vexpand(true)

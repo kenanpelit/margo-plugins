@@ -437,14 +437,17 @@ fn timer_section() -> El {
 
     El::vbox(vec![
         El::label("Sleep timer").class("plugin-section-title").halign("start"),
-        El::grid(4, chips).spacing(6),
+        // Durations centred as one row (consistent with the rest of the panel)
+        // rather than a left-aligned, ragged 4-column grid.
+        El::hbox(chips).spacing(6).halign("center"),
+        El::label("When done").class("plugin-section-title").halign("start"),
         El::hbox(vec![
-            El::label("When done").class("dim-label").halign("start").hexpand(true),
             done_chip("stopall", "Stop"),
             done_chip("lock", "Lock"),
             done_chip("suspend", "Suspend"),
         ])
-        .spacing(6),
+        .spacing(6)
+        .halign("center"),
     ])
     .spacing(8)
 }
