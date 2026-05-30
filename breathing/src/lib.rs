@@ -245,6 +245,9 @@ fn technique_tile(i: usize, t: &Tech) -> El {
     El::button(format!("tech:{i}"), t.name)
         .prop("icon", t.icon)
         .class(class)
+        // Fill the column so the grid spans the panel width (and the tiles
+        // size to the menu, not their text), instead of hugging the left.
+        .hexpand(true)
 }
 
 fn selector_view() -> El {
@@ -303,7 +306,7 @@ fn selector_view() -> El {
         .padding(12)
         .class("plugin-card"),
         El::label("Duration").class("plugin-section-title").halign("start"),
-        El::grid(6, dur_chips).spacing(6),
+        El::hbox(dur_chips).spacing(6).halign("center"),
         El::button("start", "Start session")
             .prop("icon", "media-playback-start-symbolic")
             .class("plugin-action plugin-action-primary plugin-expand")

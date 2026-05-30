@@ -1,6 +1,6 @@
 id = "ambient-sound"
 name = "Ambient Sound"
-version = "0.1.1"
+version = "0.1.2"
 author = "kenanpelit"
 min_mshell = "0.8.8"
 description = "Ambient soundscapes for focus & sleep — 14 looping sounds (rain, storm, waves, fireplace, coffee shop, …) you can mix, save as presets, and auto-stop with a sleep timer. In-shell mixer panel on a wasm-plugins build. Needs mpv + socat."

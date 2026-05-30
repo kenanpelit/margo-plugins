@@ -364,6 +364,9 @@ fn sound_tile(s: &Sound) -> El {
     El::button(format!("s:{}", s.id), s.name)
         .prop("icon", s.icon)
         .class(class)
+        // Fill the column so the grid spans the panel width (tiles size to the
+        // menu, not their text) instead of hugging the left edge.
+        .hexpand(true)
 }
 
 fn sounds_section() -> El {

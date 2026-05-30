@@ -17,7 +17,7 @@ description = "Live ↓/↑ network throughput across all interfaces; click for 
 [[plugins]]
 id = "breathing"
 dir = "breathing"
-version = "0.1.3"
+version = "0.1.4"
 name = "Breathing"
 min_mshell = "0.8.8"
 description = "Guided breathing exercises for calm & focus — 6 techniques (Deep, 4-7-8, Box, Equal, Resonance, Alternate Nostril) with a live breathing orb, phase coaching, and a duration timer. In-shell panel; optional chime cues need paplay."
@@ -26,7 +26,7 @@ icon = "weather-windy-symbolic"
 [[plugins]]
 id = "ambient-sound"
 dir = "ambient-sound"
-version = "0.1.1"
+version = "0.1.2"
 name = "Ambient Sound"
 min_mshell = "0.8.8"
 description = "Ambient soundscapes for focus & sleep — 14 looping sounds (rain, storm, waves, fireplace, coffee shop, …) you can mix, save as presets, and auto-stop with a sleep timer (Stop / Lock / Suspend). In-shell mixer panel. Needs mpv + socat."

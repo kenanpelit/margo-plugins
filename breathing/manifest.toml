@@ -1,6 +1,6 @@
 id = "breathing"
 name = "Breathing"
-version = "0.1.3"
+version = "0.1.4"
 author = "kenanpelit"
 min_mshell = "0.8.8"
 description = "Guided breathing exercises for calm & focus — 6 techniques (Deep, 4-7-8, Box, Equal, Resonance, Alternate Nostril) with a live breathing orb, phase coaching, and a duration timer. In-shell panel; optional chime cues need paplay."
