@@ -56,3 +56,12 @@ name = "Todo"
 min_mshell = "0.8.8"
 description = "Lightweight task list. Items live in the plugin's data dir via the host's scoped write-file capability — no network, no shell-outs."
 icon = "checkbox-checked-symbolic"
+
+[[plugins]]
+id = "model-usage"
+dir = "model-usage"
+version = "0.1.0"
+name = "Model Usage"
+min_mshell = "0.8.8"
+description = "AI assistant usage stats (Claude Code from ~/.claude/stats-cache.json + OpenRouter from /api/v1/key). Tabbed panel with today/lifetime cards, recent-day bar chart, and tokens-by-model breakdown. Port of the noctalia plugin with matugen styling + keyring-backed API keys."
+icon = "applications-development-symbolic"

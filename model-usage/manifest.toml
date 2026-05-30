@@ -1,0 +1,55 @@
+id = "model-usage"
+name = "Model Usage"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "AI assistant usage stats (Claude Code, OpenRouter) — today's prompts/tokens, rate-limit progress, recent-day activity, models breakdown. Port of the noctalia plugin with the matugen design language + keyring-backed API keys."
+icon = "applications-development-symbolic"
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+[[widget]]
+key = "main"
+icon = "applications-development-symbolic"
+tooltip = "AI usage — click for per-provider stats"
+# Pill label: sum of all Claude messages across days. Falls back to "0".
+exec = "jq -r '[.dailyActivity[].messageCount] | add // 0' ~/.claude/stats-cache.json 2>/dev/null || echo 0"
+template = "{output}"
+interval = 60
+max_chars = 8
+opens_panel = true
+on_click = "notify-send -- 'Model Usage' 'Open the panel for per-provider stats.'"
+
+[[keybind]]
+combo       = "super,m"
+id          = "open"
+description = "Open the model usage panel."
+
+[[setting]]
+key         = "claude_enabled"
+label       = "Claude Code"
+type        = "bool"
+default     = "true"
+description = "Read ~/.claude/stats-cache.json for local Claude Code stats. Needs jq + the file."
+
+[[setting]]
+key         = "openrouter_enabled"
+label       = "OpenRouter"
+type        = "bool"
+default     = "false"
+description = "Pull usage info from https://openrouter.ai/api/v1/key. Needs the API key below."
+
+[[setting]]
+key         = "openrouter_api_key"
+label       = "OpenRouter API key"
+type        = "secret"
+default     = ""
+description = "Stored in the system keyring (not plugins.toml)."
+
+[[setting]]
+key         = "active_tab"
+label       = "Default active tab"
+type        = "choice"
+choices     = ["claude", "openrouter"]
+default     = "claude"

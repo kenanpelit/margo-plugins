@@ -1,0 +1,23 @@
+# AI assistant usage stats — port of the noctalia model-usage plugin.
+[package]
+name = "model-usage"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[workspace]
