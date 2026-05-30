@@ -17,7 +17,7 @@ description = "Live ↓/↑ network throughput across all interfaces; click for 
 [[plugins]]
 id = "breathing"
 dir = "breathing"
-version = "0.1.0"
+version = "0.1.1"
 name = "Breathing"
 min_mshell = "0.8.8"
 description = "Guided breathing exercises for calm & focus — 6 techniques (Deep, 4-7-8, Box, Equal, Resonance, Alternate Nostril) with a live breathing orb, phase coaching, and a duration timer. In-shell panel; optional chime cues need paplay."

@@ -167,9 +167,11 @@ fn current_phase() -> (Phase, u32, u32) {
 
 fn start_ticker() {
     stop_ticker(); // belt-and-suspenders: never run two
-    let script = format!(
-        ": {TICKER_MARK}; while :; do printf '.\\n'; sleep 0.1; done"
-    );
+    // 500 ms heartbeat: each line advances 5 ticks (1 tick = 0.1 s). A slower
+    // beat means the panel re-renders only twice a second instead of ten times,
+    // so the Pause / End buttons aren't torn down mid-click — the host rebuilds
+    // the whole tree on every event, and a 100 ms beat made them near-unclickable.
+    let script = format!(": {TICKER_MARK}; while :; do printf '.\\n'; sleep 0.5; done");
     let id = host::process_start("sh", &["-c".to_string(), script]);
     TICKER.with(|t| *t.borrow_mut() = id);
 }
@@ -400,6 +402,15 @@ impl Component for Breathing {
                         "pause" => {
                             let now = !PAUSED.with(|p| *p.borrow());
                             PAUSED.with(|p| *p.borrow_mut() = now);
+                            // Killing the ticker while paused means the panel
+                            // stops re-rendering entirely, so Resume / End are
+                            // 100% reliable; restart it on resume (without
+                            // resetting the elapsed ticks).
+                            if now {
+                                stop_ticker();
+                            } else {
+                                start_ticker();
+                            }
                         }
                         _ => {}
                     }
@@ -412,7 +423,8 @@ impl Component for Breathing {
                     && RUNNING.with(|r| *r.borrow())
                     && !PAUSED.with(|p| *p.borrow())
                 {
-                    let advanced = ev.value.matches('\n').count() as u32;
+                    // Each 500 ms heartbeat line is 5 ticks (1 tick = 0.1 s).
+                    let advanced = ev.value.matches('\n').count() as u32 * 5;
                     if advanced > 0 {
                         TICKS.with(|t| *t.borrow_mut() += advanced);
                         on_advance();
