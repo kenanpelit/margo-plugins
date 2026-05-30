@@ -11,6 +11,9 @@ thread_local! {
     static CAPTURING: RefCell<bool> = const { RefCell::new(false) };
     static LINE_BUF: RefCell<String> = const { RefCell::new(String::new()) };
     static REQ_ID: RefCell<String> = const { RefCell::new(String::new()) };
+    /// Set when evtest couldn't be started (missing binary / permission / bad
+    /// device) so the panel explains why instead of silently sitting idle.
+    static ERROR: RefCell<String> = const { RefCell::new(String::new()) };
     static MOD_SHIFT: RefCell<bool> = const { RefCell::new(false) };
     static MOD_CTRL: RefCell<bool> = const { RefCell::new(false) };
     static MOD_ALT: RefCell<bool> = const { RefCell::new(false) };
@@ -40,6 +43,7 @@ fn start_capture() {
     REQ_ID.with(|r| *r.borrow_mut() = id);
     CAPTURING.with(|c| *c.borrow_mut() = true);
     LINE_BUF.with(|b| b.borrow_mut().clear());
+    ERROR.with(|e| e.borrow_mut().clear());
 }
 
 fn stop_capture() {
@@ -194,7 +198,13 @@ fn view_tree() -> El {
     .spacing(8)
     .class("plugin-panel-header");
 
-    let body: El = if keys.is_empty() {
+    let error = ERROR.with(|e| e.borrow().clone());
+    let body: El = if !error.is_empty() {
+        El::label(error)
+            .class("dim-label")
+            .halign("center")
+            .padding(24)
+    } else if keys.is_empty() {
         let hint = if capturing {
             "Press a key to see it here."
         } else {
@@ -267,7 +277,19 @@ impl Component for ShowKeys {
                 }
             }
             EventKind::StreamChunk => {
-                ingest_chunk(&ev.value);
+                // The host reports a spawn failure as a single `error: …`
+                // chunk — surface it (the common case is evtest not installed).
+                if ev.value.trim_start().starts_with("error:") {
+                    ERROR.with(|e| {
+                        *e.borrow_mut() = "Couldn't start evtest. Install it (e.g. \
+                            `sudo pacman -S evtest`) and make sure your user is in \
+                            the `input` group, then check the device path in Settings."
+                            .to_string()
+                    });
+                    stop_capture();
+                } else {
+                    ingest_chunk(&ev.value);
+                }
             }
             EventKind::StreamEnd => {
                 CAPTURING.with(|c| *c.borrow_mut() = false);

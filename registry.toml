@@ -105,7 +105,7 @@ icon = "applications-development-symbolic"
 [[plugins]]
 id = "show-keys"
 dir = "show-keys"
-version = "0.1.0"
+version = "0.1.1"
 name = "Show Keys"
 min_mshell = "0.8.8"
 description = "Live keyboard-input display via evtest — useful for screen recordings + tutorials. Streams evtest stdout through the host's process-start capability and renders recent keys as primary-container pills. Needs evtest + your user in the `input` group."
