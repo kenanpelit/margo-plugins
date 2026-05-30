@@ -11,6 +11,14 @@ description = "AI assistant (Google Gemini). Set model + API key here; click the
 entry = "plugin.wasm"
 entry_kind = "wasm"
 
+# Suggested global hotkey: Super+A opens the panel and focuses the chat
+# input. mshell writes this binding to ~/.config/margo/binds.d/mshell-plugins.conf
+# on enable; conflict resolution is deterministic (alphabetical plugin id).
+[[keybind]]
+combo       = "super,a"
+id          = "open"
+description = "Open the assistant panel and focus the chat input."
+
 # Settings flow into both the WASM panel (via get-setting) and the terminal
 # command (via {{key}}); api_key is a `secret` (masked, stored 0600).
 [[setting]]
