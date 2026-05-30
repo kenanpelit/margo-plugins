@@ -35,7 +35,7 @@ icon = "audio-headphones-symbolic"
 [[plugins]]
 id = "musiclyrics"
 dir = "musiclyrics"
-version = "0.1.0"
+version = "0.1.1"
 name = "Music Lyrics"
 min_mshell = "0.8.8"
 description = "Time-synced lyrics for whatever's playing (MPRIS). Fetches from lrclib.net, caches locally, and highlights the current line live as the song plays. The bar pill can show the current line. In-shell panel."
