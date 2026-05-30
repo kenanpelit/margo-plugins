@@ -69,10 +69,10 @@ icon = "utilities-system-monitor-symbolic"
 [[plugins]]
 id = "todo"
 dir = "todo"
-version = "0.1.0"
+version = "0.2.0"
 name = "Todo"
 min_mshell = "0.8.8"
-description = "Lightweight task list. Items live in the plugin's data dir via the host's scoped write-file capability — no network, no shell-outs."
+description = "Local task list with subtasks, inline edit, reordering, and All / Active / Done filters. Items live in todos.json in the plugin's data dir via the host's scoped write-file capability — no network, no shell-outs. The bar pill shows a live count."
 icon = "checkbox-checked-symbolic"
 
 [[plugins]]

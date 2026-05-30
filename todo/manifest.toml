@@ -1,21 +1,48 @@
 id = "todo"
 name = "Todo"
-version = "0.1.0"
+version = "0.2.0"
 author = "kenanpelit"
 min_mshell = "0.8.8"
-description = "Lightweight task list. Items live in ~/.local/share/mshell/plugins/todo/items.txt via the host's scoped write-file capability — no network, no shell-outs."
-icon = "checkbox-checked-symbolic"
+description = "Local task list with subtasks, inline edit, reordering, and All / Active / Done filters. Items live in todos.json in the plugin's data dir via the host's scoped write-file capability — no network, no shell-outs. The bar pill shows a live count."
 
 entry = "plugin.wasm"
 entry_kind = "wasm"
 
+# Suggested global hotkey: Super+Shift+T opens the todo panel.
+[[keybind]]
+combo       = "super+shift,t"
+id          = "open"
+description = "Open the todo list panel."
+
+# ── Settings ────────────────────────────────────────────────────────────────
+[[setting]]
+key = "count_mode"
+label = "Bar pill count"
+type = "choice"
+choices = ["active", "total", "done", "hidden"]
+default = "active"
+description = "What the bar pill's badge counts (or hide it)."
+
+[[setting]]
+key = "max_todos"
+label = "Maximum todos"
+type = "string"
+default = "200"
+
+[[setting]]
+key = "max_chars"
+label = "Max characters per todo"
+type = "string"
+default = "500"
+
+# ── Bar pill ────────────────────────────────────────────────────────────────
 [[widget]]
 key = "main"
 icon = "checkbox-checked-symbolic"
 tooltip = "Todo — click for your task list"
-exec = "echo todo"
-template = "{output}"
-interval = 60
-max_chars = 6
 opens_panel = true
-on_click = "notify-send -- Todo 'Open the panel to manage your tasks.'"
+# Live count read from the JSON store (active / total / done, or hidden).
+exec = "sh {{plugin_dir}}/count.sh {{count_mode}}"
+template = "{output}"
+interval = 30
+max_chars = 4
