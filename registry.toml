@@ -65,3 +65,21 @@ name = "Model Usage"
 min_mshell = "0.8.8"
 description = "AI assistant usage stats (Claude Code from ~/.claude/stats-cache.json + OpenRouter from /api/v1/key). Tabbed panel with today/lifetime cards, recent-day bar chart, and tokens-by-model breakdown. Port of the noctalia plugin with matugen styling + keyring-backed API keys."
 icon = "applications-development-symbolic"
+
+[[plugins]]
+id = "show-keys"
+dir = "show-keys"
+version = "0.1.0"
+name = "Show Keys"
+min_mshell = "0.8.8"
+description = "Live keyboard-input display via evtest — useful for screen recordings + tutorials. Streams evtest stdout through the host's process-start capability and renders recent keys as primary-container pills. Needs evtest + your user in the `input` group."
+icon = "input-keyboard-symbolic"
+
+[[plugins]]
+id = "color-scheme-creator"
+dir = "color-scheme-creator"
+version = "0.1.0"
+name = "Color Scheme Creator"
+min_mshell = "0.8.8"
+description = "Manage curated color schemes for margo's compositor palette. Save the current ~/.config/margo/colors.conf as a named preset, apply a saved preset (cp + mctl reload), or hex-edit any of the seven tokens inline. Port of the noctalia plugin scoped to margo's compositor palette."
+icon = "preferences-desktop-color-symbolic"

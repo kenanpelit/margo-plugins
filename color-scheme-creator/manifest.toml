@@ -1,0 +1,25 @@
+id = "color-scheme-creator"
+name = "Color Scheme Creator"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Manage hand-curated color schemes for margo's compositor palette (~/.config/margo/colors.conf). Save the current colours as a named preset, browse saved presets, apply one with a click, and tweak individual hex values inline. Port of the noctalia color-scheme-creator scoped to margo's 7 compositor tokens."
+icon = "preferences-desktop-color-symbolic"
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+[[widget]]
+key = "main"
+icon = "preferences-desktop-color-symbolic"
+tooltip = "Color schemes — manage curated palettes"
+exec = "echo color-schemes"
+template = "{output}"
+interval = 0
+max_chars = 6
+opens_panel = true
+
+[[keybind]]
+combo       = "super+shift,c"
+id          = "open"
+description = "Open the color scheme panel."

@@ -1,0 +1,23 @@
+# Color Scheme Creator — preset manager + hex editor for margo's
+# `~/.config/margo/colors.conf` (port of noctalia color-scheme-creator,
+# scoped to margo's 7-token compositor palette).
+[package]
+name = "color-scheme-creator"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[workspace]
