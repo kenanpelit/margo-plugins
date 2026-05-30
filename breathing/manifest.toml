@@ -1,0 +1,40 @@
+id = "breathing"
+name = "Breathing"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Guided breathing exercises for calm & focus — 6 techniques (Deep, 4-7-8, Box, Equal, Resonance, Alternate Nostril) with a live breathing orb, phase coaching, and a duration timer. In-shell panel; optional chime cues need paplay."
+
+# Sandboxed WASM panel (the mplugins WASM tier). A `wasm-plugins` build of
+# mshell renders this in-shell; standard builds show the rebuild hint.
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+# Suggested global hotkey: Super+Shift+B opens the breathing panel.
+[[keybind]]
+combo       = "super+shift,b"
+id          = "open"
+description = "Open the breathing exercise panel."
+
+# ── Settings ────────────────────────────────────────────────────────────────
+[[setting]]
+key = "default_minutes"
+label = "Default duration"
+type = "choice"
+choices = ["1", "3", "5", "10", "15", "30"]
+default = "5"
+
+[[setting]]
+key = "cues"
+label = "Sound cues"
+type = "choice"
+choices = ["no", "yes"]
+default = "no"
+description = "Play a soft chime at the start of each inhale (needs paplay)."
+
+# ── Bar pill ────────────────────────────────────────────────────────────────
+[[widget]]
+key = "breathing"
+icon = "weather-windy-symbolic"
+tooltip = "Breathing exercise — guided calm & focus"
+opens_panel = true

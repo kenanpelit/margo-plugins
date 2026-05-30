@@ -1,0 +1,28 @@
+# Source for the breathing WASM panel. Built for wasm32-wasip2; the resulting
+# component is shipped as `plugin.wasm` (the manifest `entry`).
+#
+# Rebuild:  cargo build --target wasm32-wasip2 --release \
+#           && cp target/wasm32-wasip2/release/breathing.wasm ../plugin.wasm
+#
+# The mplugin-sdk path assumes the margo repo is a sibling of margo-plugins
+# (~/.kod/margo and ~/.kod/margo-plugins). Adjust if your layout differs.
+[package]
+name = "breathing"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mplugin-sdk = { path = "../../margo/mplugin-sdk" }
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[workspace]
