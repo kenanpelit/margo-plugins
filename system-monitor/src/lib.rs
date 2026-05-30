@@ -153,7 +153,7 @@ fn view_tree() -> El {
             .class("plugin-action plugin-action-primary")
             .hexpand(true),
     ])
-    .spacing(10)
+    .spacing(12)
     .padding(12)
     .class("plugin-panel-body")
 }

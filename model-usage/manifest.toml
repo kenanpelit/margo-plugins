@@ -1,6 +1,6 @@
 id = "model-usage"
 name = "Model Usage"
-version = "0.1.0"
+version = "0.1.1"
 author = "kenanpelit"
 min_mshell = "0.8.8"
 description = "AI assistant usage stats (Claude Code, OpenRouter) — today's prompts/tokens, rate-limit progress, recent-day activity, models breakdown. Port of the noctalia plugin with the matugen design language + keyring-backed API keys."

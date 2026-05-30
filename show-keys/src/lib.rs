@@ -220,7 +220,7 @@ fn view_tree() -> El {
             .map(|k| El::label(k.clone()).class("plugin-key-pill"))
             .collect();
         El::hbox(pills)
-            .spacing(6)
+            .spacing(8)
             .halign("center")
             .padding(12)
             .class("plugin-card")

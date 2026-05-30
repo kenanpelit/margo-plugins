@@ -158,7 +158,7 @@ fn controls_row(m: &host::MediaInfo) -> El {
             .class("plugin-panel-action"),
         toggle("loop", loop_icon, loop_on),
     ])
-    .spacing(10)
+    .spacing(12)
     .halign("center")
 }
 
@@ -190,7 +190,7 @@ fn view_tree() -> El {
             El::label("Nothing playing").class("label-large-bold").halign("center"),
             El::label("Start a track in any media player.").class("dim-label").halign("center"),
         ])
-        .spacing(10)
+        .spacing(12)
         .valign("center")
         .vexpand(true)
         .class("plugin-panel-large");
@@ -212,7 +212,7 @@ fn view_tree() -> El {
     } else {
         "mplayer-head mplayer-paused"
     };
-    let head = El::vbox(vec![art_view(&m), El::vbox(meta).spacing(2)])
+    let head = El::vbox(vec![art_view(&m), El::vbox(meta).spacing(4)])
         .spacing(12)
         .class(head_class);
 
@@ -222,7 +222,7 @@ fn view_tree() -> El {
         controls_row(&m),
         seek_row(),
     ])
-    .spacing(14)
+    .spacing(16)
     .class("plugin-panel-large")
 }
 

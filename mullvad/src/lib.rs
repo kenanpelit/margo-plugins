@@ -147,7 +147,7 @@ fn toggle_card(id: &str, title: &str, description: &str, on: bool) -> El {
                 .class("dim-label")
                 .halign("start"),
         ])
-        .spacing(2)
+        .spacing(4)
         .hexpand(true),
         El::switch(id, on).valign("center"),
     ])
@@ -178,7 +178,7 @@ fn hero_card(st: &Status) -> El {
                     .class("dim-label")
                     .halign("start"),
             ])
-            .spacing(2)
+            .spacing(4)
             .hexpand(true),
             if st.relay.is_empty() {
                 El::label("—")
@@ -189,7 +189,7 @@ fn hero_card(st: &Status) -> El {
             .valign("center"),
         ])
         .spacing(12)
-        .padding(14)
+        .padding(16)
         .class("plugin-hero plugin-hero-on")
     } else {
         El::hbox(vec![
@@ -202,11 +202,11 @@ fn hero_card(st: &Status) -> El {
                     .class("dim-label")
                     .halign("start"),
             ])
-            .spacing(2)
+            .spacing(4)
             .hexpand(true),
         ])
         .spacing(12)
-        .padding(14)
+        .padding(16)
         .class("plugin-hero")
     }
 }
@@ -346,7 +346,7 @@ fn view_tree() -> El {
                 // one filled primary action is the hero Connect up top.
                 El::button(format!("c:{code}"), "Connect").class("plugin-action"),
             ])
-            .spacing(10)
+            .spacing(12)
             .padding(8)
             .class("plugin-bar-row")
         })

@@ -203,7 +203,7 @@ fn view_tree() -> El {
                     "plugin-toggle plugin-expand"
                 }),
         ])
-        .spacing(6),
+        .spacing(8),
         El::stack(tab, vec![controls_pane(), about_pane()]),
     ])
     .spacing(12)

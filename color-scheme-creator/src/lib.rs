@@ -214,7 +214,7 @@ fn token_row(key: &str, label: &str, value: &str) -> El {
             .class("plugin-search")
             .prop("width", "180"),
     ])
-    .spacing(10)
+    .spacing(12)
     .padding(4)
     .class("plugin-bar-row")
 }
@@ -325,7 +325,7 @@ fn view_tree() -> El {
         save_section,
         status_label,
     ])
-    .spacing(14)
+    .spacing(16)
     .class("plugin-panel-large")
 }
 

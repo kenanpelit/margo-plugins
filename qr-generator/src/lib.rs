@@ -193,7 +193,7 @@ fn view_tree() -> El {
             .prop("icon", "scanner-symbolic")
             .class("plugin-action plugin-action-primary"),
     ])
-    .spacing(6);
+    .spacing(8);
 
     let sources = El::hbox(vec![
         El::button("clip", "Clipboard")
@@ -203,7 +203,7 @@ fn view_tree() -> El {
             .prop("icon", "network-wireless-symbolic")
             .class("plugin-chip"),
     ])
-    .spacing(6)
+    .spacing(8)
     .halign("center");
 
     let mut children = vec![header, input, sources, El::separator()];

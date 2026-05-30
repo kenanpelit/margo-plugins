@@ -312,12 +312,12 @@ fn header() -> El {
             El::label("Ambient Sound").class("label-large-bold").halign("start"),
             El::label(subtitle).class("dim-label").halign("start"),
         ])
-        .spacing(2)
+        .spacing(4)
         .hexpand(true),
-        El::hbox(right).spacing(6),
+        El::hbox(right).spacing(8),
     ])
     .class("plugin-panel-header")
-    .spacing(10)
+    .spacing(12)
 }
 
 fn master_card() -> El {
@@ -343,14 +343,14 @@ fn master_card() -> El {
                 .prop("icon", "audio-volume-high-symbolic")
                 .class("plugin-action"),
         ])
-        .spacing(10),
+        .spacing(12),
         El::hbox(vec![
             El::label("Mute").halign("start").hexpand(true),
             El::switch("mute", muted),
         ]),
     ])
-    .spacing(10)
-    .padding(14)
+    .spacing(12)
+    .padding(16)
     .class("plugin-card")
 }
 
@@ -393,7 +393,7 @@ fn presets_section() -> El {
                     .prop("icon", "user-trash-symbolic")
                     .class("plugin-action plugin-action-danger"),
             ])
-            .spacing(6),
+            .spacing(8),
         );
     }
     if rows.is_empty() {
@@ -442,14 +442,14 @@ fn timer_section() -> El {
         El::label("Sleep timer").class("plugin-section-title").halign("start"),
         // Durations centred as one row (consistent with the rest of the panel)
         // rather than a left-aligned, ragged 4-column grid.
-        El::hbox(chips).spacing(6).halign("center"),
+        El::hbox(chips).spacing(8).halign("center"),
         El::label("When done").class("plugin-section-title").halign("start"),
         El::hbox(vec![
             done_chip("stopall", "Stop"),
             done_chip("lock", "Lock"),
             done_chip("suspend", "Suspend"),
         ])
-        .spacing(6)
+        .spacing(8)
         .halign("center"),
     ])
     .spacing(8)
@@ -466,7 +466,7 @@ fn view_tree() -> El {
         El::separator(),
         timer_section(),
     ])
-    .spacing(14)])
+    .spacing(16)])
     .vexpand(true)
 }
 

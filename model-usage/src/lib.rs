@@ -269,7 +269,7 @@ fn bar_row(label: &str, count: i64, peak: i64) -> El {
             .halign("end")
             .prop("width", "60"),
     ])
-    .spacing(10)
+    .spacing(12)
     .class("plugin-bar-row")
 }
 
@@ -352,7 +352,7 @@ fn claude_pane() -> El {
             .iter()
             .map(|d| bar_row(&d.date, d.message_count, peak))
             .collect();
-        children.push(El::vbox(rows).spacing(2).class("plugin-card"));
+        children.push(El::vbox(rows).spacing(4).class("plugin-card"));
     }
 
     if !s.by_model.is_empty() {
@@ -364,10 +364,10 @@ fn claude_pane() -> El {
             .into_iter()
             .map(|(m, t)| bar_row(m, *t, peak))
             .collect();
-        children.push(El::vbox(rows).spacing(2).class("plugin-card"));
+        children.push(El::vbox(rows).spacing(4).class("plugin-card"));
     }
 
-    El::vbox(children).spacing(14).with_id("claude")
+    El::vbox(children).spacing(16).with_id("claude")
 }
 
 fn openrouter_pane() -> El {
@@ -455,11 +455,11 @@ fn openrouter_pane() -> El {
             El::progress(used_fraction).hexpand(true),
             El::label(limit_text).class("dim-label"),
         ])
-        .spacing(6)
+        .spacing(8)
         .padding(12)
         .class("plugin-card"),
     ])
-    .spacing(14)
+    .spacing(16)
     .with_id("openrouter")
 }
 

@@ -249,7 +249,7 @@ fn input_area() -> El {
                     .prop("icon", "edit-clear-symbolic")
                     .class("plugin-panel-action"),
             ])
-            .spacing(6),
+            .spacing(8),
         );
     }
 
@@ -263,9 +263,9 @@ fn input_area() -> El {
             El::entry("draft", &draft).class("plugin-search").hexpand(true),
             El::button(add_id, "").prop("icon", add_icon).class("plugin-action plugin-action-primary"),
         ])
-        .spacing(6),
+        .spacing(8),
     );
-    El::vbox(children).spacing(6)
+    El::vbox(children).spacing(8)
 }
 
 fn filter_chips() -> El {
@@ -283,7 +283,7 @@ fn filter_chips() -> El {
         chip("filter:active", "Active", Filter::Active),
         chip("filter:done", "Done", Filter::Done),
     ])
-    .spacing(6)
+    .spacing(8)
     .halign("center")
 }
 
@@ -365,11 +365,11 @@ fn view_tree() -> El {
                 .class("dim-label")
                 .halign("start"),
         ])
-        .spacing(2)
+        .spacing(4)
         .hexpand(true),
     ])
     .class("plugin-panel-header")
-    .spacing(10);
+    .spacing(12);
 
     // Build the list for the active filter.
     let mut rows: Vec<El> = Vec::new();
@@ -390,7 +390,7 @@ fn view_tree() -> El {
         };
         El::label(msg).class("dim-label").halign("center").padding(16)
     } else {
-        El::scroll(rows).class("plugin-list").vexpand(true).spacing(2)
+        El::scroll(rows).class("plugin-list").vexpand(true).spacing(4)
     };
 
     let mut children = vec![header, input_area(), filter_chips(), El::separator(), list];

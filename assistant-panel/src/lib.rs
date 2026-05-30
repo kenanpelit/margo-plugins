@@ -584,12 +584,12 @@ fn header_card() -> El {
             El::label("Assistant").class("label-large-bold").halign("start"),
             El::label(status).class("dim-label").halign("start"),
         ])
-        .spacing(2)
+        .spacing(4)
         .hexpand(true),
-        El::hbox(actions).spacing(6),
+        El::hbox(actions).spacing(8),
     ])
     .class("plugin-panel-header")
-    .spacing(10)
+    .spacing(12)
 }
 
 fn empty_state() -> El {
@@ -626,7 +626,7 @@ fn bubble(m: &Msg) -> El {
         El::label(role_label).class("dim-label").halign("start"),
         El::markdown(body).class(bubble_class),
     ])
-    .spacing(2)
+    .spacing(4)
 }
 
 fn log_view() -> El {
@@ -634,7 +634,7 @@ fn log_view() -> El {
     if bubbles.is_empty() {
         El::scroll(vec![empty_state()]).vexpand(true)
     } else {
-        El::scroll(bubbles).with_id("log").vexpand(true).spacing(10)
+        El::scroll(bubbles).with_id("log").vexpand(true).spacing(12)
     }
 }
 

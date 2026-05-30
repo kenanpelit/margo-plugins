@@ -288,11 +288,11 @@ fn selector_view() -> El {
                 El::label("Breathing").class("label-large-bold").halign("start"),
                 El::label("Pick a technique, then breathe").class("dim-label").halign("start"),
             ])
-            .spacing(2)
+            .spacing(4)
             .hexpand(true),
         ])
         .class("plugin-panel-header")
-        .spacing(10),
+        .spacing(12),
         El::label("Technique").class("plugin-section-title").halign("start"),
         El::grid(2, tiles).spacing(8),
         // Selected-technique summary card.
@@ -306,13 +306,13 @@ fn selector_view() -> El {
         .padding(12)
         .class("plugin-card"),
         El::label("Duration").class("plugin-section-title").halign("start"),
-        El::hbox(dur_chips).spacing(6).halign("center"),
+        El::hbox(dur_chips).spacing(8).halign("center"),
         El::button("start", "Start session")
             .prop("icon", "media-playback-start-symbolic")
             .class("plugin-action plugin-action-primary plugin-expand")
             .hexpand(true),
     ])
-    .spacing(14)])
+    .spacing(16)])
     .vexpand(true)
 }
 
@@ -339,13 +339,13 @@ fn exercise_view() -> El {
                 El::label(tech().name).class("label-large-bold").halign("start"),
                 El::label(format!("{mm}:{ss:02} left")).class("dim-label").halign("start"),
             ])
-            .spacing(2)
+            .spacing(4)
             .hexpand(true),
             El::label(format!("{}m", MINUTES.with(|m| *m.borrow())))
                 .class("plugin-status-badge"),
         ])
         .class("plugin-panel-header")
-        .spacing(10),
+        .spacing(12),
         // The orb — the centrepiece.
         El::breath_orb(frac, 200).class(orb_class).halign("center"),
         // Phase word + per-phase countdown.
@@ -353,7 +353,7 @@ fn exercise_view() -> El {
             El::label(phase_word).class(format!("breath-phase {orb_class}")).halign("center"),
             El::label(phase_remaining.to_string()).class("breath-count").halign("center"),
         ])
-        .spacing(2),
+        .spacing(4),
         // Controls.
         El::hbox(vec![
             El::button("pause", if paused { "Resume" } else { "Pause" })
@@ -367,7 +367,7 @@ fn exercise_view() -> El {
         ])
         .spacing(8),
     ])
-    .spacing(14)
+    .spacing(16)
     .padding(8)
 }
 

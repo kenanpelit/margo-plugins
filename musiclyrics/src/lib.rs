@@ -441,14 +441,14 @@ fn header(m: &host::MediaInfo) -> El {
             El::label(title).class("label-large-bold").halign("start"),
             El::label(subtitle).class("dim-label").halign("start"),
         ])
-        .spacing(2)
+        .spacing(4)
         .hexpand(true),
         El::button("refresh", "")
             .prop("icon", "view-refresh-symbolic")
             .class("plugin-panel-action"),
     ])
     .class("plugin-panel-header")
-    .spacing(10)
+    .spacing(12)
 }
 
 fn status_note() -> Option<El> {
@@ -505,7 +505,7 @@ fn plain_view() -> El {
             El::label(display).class("lyrics-line").halign("center")
         })
         .collect();
-    El::scroll(rows).class("plugin-list").vexpand(true).spacing(6)
+    El::scroll(rows).class("plugin-list").vexpand(true).spacing(8)
 }
 
 fn message(text: &str) -> El {
