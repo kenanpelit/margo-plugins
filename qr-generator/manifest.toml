@@ -1,0 +1,30 @@
+id = "qr-generator"
+name = "QR Generator"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Generate a QR code from text, the clipboard, or your current Wi-Fi network — shown right in the panel, copyable as text or PNG. Needs qrencode."
+
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+# Suggested global hotkey: Super+Shift+Q opens the QR generator.
+[[keybind]]
+combo       = "super+shift,q"
+id          = "open"
+description = "Open the QR generator."
+
+# ── Settings ────────────────────────────────────────────────────────────────
+[[setting]]
+key = "scale"
+label = "QR pixel scale"
+type = "string"
+default = "10"
+description = "qrencode module size (-s). Bigger = larger QR image."
+
+# ── Bar pill ────────────────────────────────────────────────────────────────
+[[widget]]
+key = "qr"
+icon = "scanner-symbolic"
+tooltip = "QR generator — text / clipboard / Wi-Fi"
+opens_panel = true

@@ -7,6 +7,15 @@
 # holds the plugin's manifest.toml; `version` must match that manifest.
 #
 [[plugins]]
+id = "qr-generator"
+dir = "qr-generator"
+version = "0.1.0"
+name = "QR Generator"
+min_mshell = "0.8.8"
+description = "Generate a QR code from text, the clipboard, or your current Wi-Fi network — shown in the panel, copyable as text or PNG. Needs qrencode."
+icon = "scanner-symbolic"
+
+[[plugins]]
 id = "network-speed"
 dir = "network-speed"
 version = "1.1.0"
