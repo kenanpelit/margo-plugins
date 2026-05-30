@@ -13,10 +13,6 @@ entry_kind = "wasm"
 key = "main"
 icon = "color-select-symbolic"
 tooltip = "Color schemes — manage curated palettes"
-exec = "echo color-schemes"
-template = "{output}"
-interval = 0
-max_chars = 6
 opens_panel = true
 
 [[keybind]]
