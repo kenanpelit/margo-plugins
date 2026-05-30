@@ -211,15 +211,6 @@ fn hero_card(st: &Status) -> El {
     }
 }
 
-fn status_chip(label: &str, value: &str, ok: bool) -> El {
-    let class = if ok {
-        "plugin-status-badge plugin-status-ok"
-    } else {
-        "plugin-status-badge"
-    };
-    El::label(format!("{label}: {value}")).class(class)
-}
-
 fn view_tree() -> El {
     let st = status();
     let search = SEARCH.with(|s| s.borrow().clone());
@@ -250,21 +241,18 @@ fn view_tree() -> El {
     .spacing(8)
     .class("plugin-panel-header");
 
-    // ── Status chips row (account + lockdown + autoconnect) ─────────
-    let chips = El::hbox(vec![
-        status_chip("Account expires", &expiry, !expiry.is_empty() && expiry != "—"),
-        status_chip(
-            "Lockdown",
-            if lockdown_on { "on" } else { "off" },
-            lockdown_on,
-        ),
-        status_chip(
-            "Auto-connect",
-            if autoconnect_on { "on" } else { "off" },
-            autoconnect_on,
-        ),
-    ])
-    .spacing(6);
+    // ── Account expiry — one calm, centred line under the hero ───────
+    // (Lockdown / Auto-connect live in the toggle cards below, so they no
+    // longer duplicate as chips here.)
+    let expiry_line = if !expiry.is_empty() && expiry != "—" {
+        Some(
+            El::label(format!("Account expires · {expiry}"))
+                .class("dim-label")
+                .halign("center"),
+        )
+    } else {
+        None
+    };
 
     // ── Stat-tile grid ──────────────────────────────────────────────
     let stats = El::grid(
@@ -290,19 +278,20 @@ fn view_tree() -> El {
     )
     .spacing(8);
 
-    // ── Big primary action ──────────────────────────────────────────
-    let (action_label, action_class) = if st.connected {
-        ("Disconnect", "plugin-action plugin-action-danger plugin-expand")
+    // ── Primary action row ──────────────────────────────────────────
+    // One consistent row of full-width 40px buttons: when connected,
+    // Disconnect + Reconnect side-by-side; otherwise a single Connect.
+    // (Refresh lives in the header, so it's no longer duplicated here.)
+    let action = if st.connected {
+        El::hbox(vec![
+            El::button("conn", "Disconnect")
+                .class("plugin-action plugin-action-danger plugin-expand"),
+            El::button("reconnect", "Reconnect").class("plugin-action plugin-expand"),
+        ])
+        .spacing(8)
     } else {
-        ("Connect", "plugin-action plugin-action-primary plugin-expand")
+        El::button("conn", "Connect").class("plugin-action plugin-action-primary plugin-expand")
     };
-
-    // ── Quick-action chip row ───────────────────────────────────────
-    let quick_row = El::hbox(vec![
-        El::button("reconnect", "Reconnect").class("plugin-action plugin-expand"),
-        El::button("refresh", "Refresh").class("plugin-action plugin-expand"),
-    ])
-    .spacing(8);
 
     // ── Toggle cards ────────────────────────────────────────────────
     let toggles = El::vbox(vec![
@@ -353,8 +342,9 @@ fn view_tree() -> El {
                     format!("{count} relays")
                 })
                 .class("plugin-status-badge"),
-                El::button(format!("c:{code}"), "Connect")
-                    .class("plugin-action plugin-action-primary"),
+                // Calm (not filled) so a long list of rows stays quiet — the
+                // one filled primary action is the hero Connect up top.
+                El::button(format!("c:{code}"), "Connect").class("plugin-action"),
             ])
             .spacing(10)
             .padding(8)
@@ -376,13 +366,13 @@ fn view_tree() -> El {
     ])
     .spacing(8);
 
-    El::vbox(vec![
-        header,
-        chips,
-        hero_card(&st),
+    let mut children = vec![header, hero_card(&st)];
+    if let Some(line) = expiry_line {
+        children.push(line);
+    }
+    children.extend(vec![
         stats,
-        El::button("conn", action_label).class(action_class),
-        quick_row,
+        action,
         El::separator(),
         toggles,
         El::separator(),
@@ -394,7 +384,8 @@ fn view_tree() -> El {
             .with_id("countries")
             .class("plugin-list")
             .vexpand(true),
-    ])
+    ]);
+    El::vbox(children)
     .spacing(12)
     .class("plugin-panel-large")
 }

@@ -43,7 +43,7 @@ description = "Multi-provider AI chat (Gemini, OpenAI-compatible, Anthropic, Oll
 [[plugins]]
 id = "mullvad"
 dir = "mullvad"
-version = "0.2.1"
+version = "0.2.2"
 name = "Mullvad VPN"
 min_mshell = "0.8.8"
 description = "Mullvad VPN: rich in-shell control panel — status, connect/disconnect/reconnect, lockdown + auto-connect toggles, searchable country list. Needs the mullvad CLI + a wasm-plugins mshell."
