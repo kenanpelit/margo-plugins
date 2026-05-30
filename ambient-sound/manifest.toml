@@ -1,0 +1,24 @@
+id = "ambient-sound"
+name = "Ambient Sound"
+version = "0.1.0"
+author = "kenanpelit"
+min_mshell = "0.8.8"
+description = "Ambient soundscapes for focus & sleep — 14 looping sounds (rain, storm, waves, fireplace, coffee shop, …) you can mix, save as presets, and auto-stop with a sleep timer. In-shell mixer panel on a wasm-plugins build. Needs mpv + socat."
+
+# Sandboxed WASM mixer panel (the mplugins WASM tier). A `wasm-plugins` build
+# of mshell renders this in-shell; standard builds show the rebuild hint.
+entry = "plugin.wasm"
+entry_kind = "wasm"
+
+# Suggested global hotkey: Super+Shift+A opens the ambient mixer.
+[[keybind]]
+combo       = "super+shift,a"
+id          = "open"
+description = "Open the ambient sound mixer."
+
+# ── Bar pill ────────────────────────────────────────────────────────────────
+[[widget]]
+key = "ambient"
+icon = "audio-headphones-symbolic"
+tooltip = "Ambient sound — mix rain, waves, fireplace…"
+opens_panel = true

@@ -15,6 +15,15 @@ min_mshell = "0.8.8"
 description = "Live ↓/↑ network throughput across all interfaces; click for a quick network menu."
 
 [[plugins]]
+id = "ambient-sound"
+dir = "ambient-sound"
+version = "0.1.0"
+name = "Ambient Sound"
+min_mshell = "0.8.8"
+description = "Ambient soundscapes for focus & sleep — 14 looping sounds (rain, storm, waves, fireplace, coffee shop, …) you can mix, save as presets, and auto-stop with a sleep timer (Stop / Lock / Suspend). In-shell mixer panel. Needs mpv + socat."
+icon = "audio-headphones-symbolic"
+
+[[plugins]]
 id = "assistant-panel"
 dir = "assistant-panel"
 version = "0.4.0"
