@@ -98,6 +98,62 @@ fn looks_like_image(preview: &str) -> bool {
             .any(|k| p.contains(k))
 }
 
+/// Content type of a clip — drives the card's tint, icon, and label (mirrors
+/// clipper's Text / Image / Colour / Link / Code / File detection).
+#[derive(Clone, Copy)]
+enum Kind {
+    Text,
+    Image,
+    Color,
+    Link,
+    Code,
+    File,
+}
+
+fn is_hex_color(t: &str) -> bool {
+    let h = t.strip_prefix('#').unwrap_or("");
+    matches!(h.len(), 3 | 6 | 8) && h.chars().all(|c| c.is_ascii_hexdigit())
+}
+
+fn looks_code(t: &str) -> bool {
+    let starts = t.starts_with(['{', '[', '(', '<']);
+    let kw = [
+        "function", "import ", "const ", "let ", "var ", "class ", "def ", "return ",
+        "#include", "fn ", "=>",
+    ];
+    starts || kw.iter().any(|k| t.contains(k))
+}
+
+fn detect_kind(e: &Entry) -> Kind {
+    if e.is_image {
+        return Kind::Image;
+    }
+    let t = e.preview.trim();
+    if is_hex_color(t) {
+        Kind::Color
+    } else if t.starts_with("http://") || t.starts_with("https://") {
+        Kind::Link
+    } else if t.starts_with('/') || t.starts_with('~') || t.starts_with("file://") {
+        Kind::File
+    } else if looks_code(t) {
+        Kind::Code
+    } else {
+        Kind::Text
+    }
+}
+
+/// (css-class suffix, type label, type icon) for a kind.
+fn kind_meta(k: Kind) -> (&'static str, &'static str, &'static str) {
+    match k {
+        Kind::Text => ("text", "Text", "text-x-generic-symbolic"),
+        Kind::Image => ("image", "Image", "image-x-generic-symbolic"),
+        Kind::Color => ("color", "Colour", "color-select-symbolic"),
+        Kind::Link => ("link", "Link", "web-browser-symbolic"),
+        Kind::Code => ("code", "Code", "utilities-terminal-symbolic"),
+        Kind::File => ("file", "File", "folder-symbolic"),
+    }
+}
+
 fn load_items() {
     let out = host::run("cliphist", &["list".to_string()]);
     let items: Vec<Entry> = out
@@ -363,45 +419,64 @@ fn tabs() -> El {
 
 // ── Tab: Clipboard ──────────────────────────────────────────────────────────
 
-fn history_row(e: &Entry) -> El {
-    let mut row: Vec<El> = Vec::new();
-    if e.is_image {
-        // Real thumbnail (decoded once) + a compact caption.
-        if let Some(path) = thumb_path(&e.id) {
-            row.push(
-                El::image(path)
-                    .prop("fit", "cover")
-                    .prop("width", "56")
-                    .prop("height", "40")
-                    .class("clipper-thumb"),
-            );
-        }
-        row.push(
-            El::button(format!("copy:{}", e.id), truncate(&e.preview, 48))
-                .class("plugin-row")
-                .hexpand(true)
-                .halign("fill"),
-        );
-    } else {
-        row.push(
-            El::button(format!("copy:{}", e.id), truncate(&e.preview, 80))
-                .prop("icon", "text-x-generic-symbolic")
-                .class("plugin-row")
-                .hexpand(true)
-                .halign("fill"),
-        );
-        row.push(
+/// One clipboard entry as a type-tinted card (clipper's board look).
+fn clip_card(e: &Entry) -> El {
+    let kind = detect_kind(e);
+    let (suffix, label, icon) = kind_meta(kind);
+
+    // Header: type icon + label, then pin (text-only) + delete.
+    let mut head = vec![
+        El::image(icon).valign("center"),
+        El::label(label).class("clip-card-type").halign("start").hexpand(true),
+    ];
+    if !e.is_image {
+        head.push(
             El::button(format!("pin:{}|{}", e.id, truncate(&e.preview, 80)), "")
                 .prop("icon", "non-starred-symbolic")
                 .class("plugin-panel-action"),
         );
     }
-    row.push(
+    head.push(
         El::button(format!("del:{}", e.id), "")
             .prop("icon", "user-trash-symbolic")
             .class("plugin-panel-action"),
     );
-    El::hbox(row).spacing(6).valign("center")
+
+    // Body: thumbnail for images, a colour swatch for colours, else excerpt.
+    let body: El = if e.is_image {
+        let thumb = thumb_path(&e.id)
+            .map(|p| {
+                El::image(p)
+                    .prop("fit", "cover")
+                    .prop("width", "150")
+                    .prop("height", "90")
+                    .halign("center")
+            })
+            .unwrap_or_else(|| El::label("image").class("dim-label"));
+        El::vbox(vec![
+            thumb,
+            El::button(format!("copy:{}", e.id), "Copy image").class("plugin-action plugin-expand"),
+        ])
+        .spacing(6)
+    } else if matches!(kind, Kind::Color) {
+        El::hbox(vec![
+            El::color_swatch(e.preview.trim(), 36).valign("center"),
+            El::button(format!("copy:{}", e.id), e.preview.trim().to_string())
+                .class("clip-card-body")
+                .hexpand(true)
+                .halign("fill"),
+        ])
+        .spacing(8)
+    } else {
+        El::button(format!("copy:{}", e.id), truncate(&e.preview, 140))
+            .class("clip-card-body")
+            .hexpand(true)
+            .halign("fill")
+    };
+
+    El::vbox(vec![El::hbox(head).spacing(4), body])
+        .spacing(6)
+        .class(format!("clip-card clip-card-{suffix}"))
 }
 
 fn clipboard_tab() -> El {
@@ -413,28 +488,27 @@ fn clipboard_tab() -> El {
         .take(max_items())
         .collect();
 
-    let mut rows: Vec<El> = vec![El::entry("search", &SEARCH.with(|s| s.borrow().clone()))
+    let search = El::entry("search", &SEARCH.with(|s| s.borrow().clone()))
         .class("plugin-search")
         .prop("placeholder", "Search clipboard… (Enter)")
-        .hexpand(true)];
+        .hexpand(true);
 
-    if filtered.is_empty() {
-        rows.push(
-            El::label(if needle.is_empty() {
-                "Clipboard history is empty."
-            } else {
-                "No matching clips."
-            })
-            .class("dim-label")
-            .halign("center")
-            .padding(16),
-        );
+    let board: El = if filtered.is_empty() {
+        El::label(if needle.is_empty() {
+            "Clipboard history is empty."
+        } else {
+            "No matching clips."
+        })
+        .class("dim-label")
+        .halign("center")
+        .padding(16)
     } else {
-        for e in &filtered {
-            rows.push(history_row(e));
-        }
-    }
-    El::scroll(rows).class("plugin-list").vexpand(true).spacing(4)
+        // A board of type-tinted cards, two columns.
+        let cards: Vec<El> = filtered.iter().map(clip_card).collect();
+        El::grid(2, cards).spacing(8)
+    };
+
+    El::vbox(vec![search, El::scroll(vec![board]).vexpand(true)]).spacing(8)
 }
 
 // ── Tab: Pinned ───────────────────────────────────────────────────────────────
@@ -442,57 +516,66 @@ fn clipboard_tab() -> El {
 fn pinned_tab() -> El {
     let pins = PINS.with(|p| p.borrow().clone());
     let mut rows: Vec<El> = Vec::new();
-    if pins.is_empty() {
-        rows.push(
-            El::label("No pinned clips. Pin a text clip with ☆ in the Clipboard tab.")
-                .class("dim-label")
-                .halign("center")
-                .padding(16),
-        );
-    } else {
+    {
         for (i, p) in pins.iter().enumerate() {
             rows.push(
-                El::hbox(vec![
-                    El::button(format!("pcopy:{i}"), truncate(&p.label, 72))
-                        .prop("icon", "starred-symbolic")
-                        .class("plugin-row")
+                El::vbox(vec![
+                    El::hbox(vec![
+                        El::image("starred-symbolic").valign("center"),
+                        El::label("Pinned").class("clip-card-type").halign("start").hexpand(true),
+                        El::button(format!("unpin:{i}"), "")
+                            .prop("icon", "user-trash-symbolic")
+                            .class("plugin-panel-action"),
+                    ])
+                    .spacing(4),
+                    El::button(format!("pcopy:{i}"), truncate(&p.label, 140))
+                        .class("clip-card-body")
                         .hexpand(true)
                         .halign("fill"),
-                    El::button(format!("unpin:{i}"), "")
-                        .prop("icon", "user-trash-symbolic")
-                        .class("plugin-panel-action"),
                 ])
-                .spacing(6),
+                .spacing(6)
+                .class("clip-card clip-card-text"),
             );
         }
     }
-    El::scroll(rows).class("plugin-list").vexpand(true).spacing(4)
+    let board = if rows.is_empty() {
+        El::label("No pinned clips. Pin a text clip with ☆ in the Clipboard tab.")
+            .class("dim-label")
+            .halign("center")
+            .padding(16)
+    } else {
+        El::grid(2, rows).spacing(8)
+    };
+    El::scroll(vec![board]).vexpand(true)
 }
 
 // ── Tab: Notes ────────────────────────────────────────────────────────────────
 
 fn note_card(note: &Note) -> El {
-    let (_cname, chex) = NOTE_COLORS[note.color];
-    El::hbox(vec![
-        // Leading filled swatch = the note's sticky colour.
-        El::color_swatch(chex, 18).valign("center"),
-        El::button(format!("ncopy:{}", note.id), truncate(&note.text, 60))
-            .class("plugin-row")
+    let (cname, _chex) = NOTE_COLORS[note.color];
+    El::vbox(vec![
+        // The note text fills the coloured card; click to copy.
+        El::button(format!("ncopy:{}", note.id), truncate(&note.text, 160))
+            .class("clip-card-body")
             .hexpand(true)
             .halign("fill"),
-        // Recolour (cycle the palette).
-        El::button(format!("ncolor:{}", note.id), "")
-            .prop("icon", "color-select-symbolic")
-            .class("plugin-panel-action"),
-        El::button(format!("nedit:{}", note.id), "")
-            .prop("icon", "document-edit-symbolic")
-            .class("plugin-panel-action"),
-        El::button(format!("ndelete:{}", note.id), "")
-            .prop("icon", "user-trash-symbolic")
-            .class("plugin-panel-action"),
+        // Footer actions: recolour · edit · delete.
+        El::hbox(vec![
+            El::label("").hexpand(true),
+            El::button(format!("ncolor:{}", note.id), "")
+                .prop("icon", "color-select-symbolic")
+                .class("plugin-panel-action"),
+            El::button(format!("nedit:{}", note.id), "")
+                .prop("icon", "document-edit-symbolic")
+                .class("plugin-panel-action"),
+            El::button(format!("ndelete:{}", note.id), "")
+                .prop("icon", "user-trash-symbolic")
+                .class("plugin-panel-action"),
+        ])
+        .spacing(2),
     ])
-    .spacing(6)
-    .valign("center")
+    .spacing(4)
+    .class(format!("note-card note-card-{cname}"))
 }
 
 fn notes_tab() -> El {
@@ -525,20 +608,16 @@ fn notes_tab() -> El {
         .spacing(6),
     );
 
-    let mut rows: Vec<El> = Vec::new();
-    if notes.is_empty() {
-        rows.push(
-            El::label("No notes yet — jot one above.")
-                .class("dim-label")
-                .halign("center")
-                .padding(16),
-        );
+    let board: El = if notes.is_empty() {
+        El::label("No notes yet — jot one above.")
+            .class("dim-label")
+            .halign("center")
+            .padding(16)
     } else {
-        for n in &notes {
-            rows.push(note_card(n));
-        }
-    }
-    children.push(El::scroll(rows).class("plugin-list").vexpand(true).spacing(6));
+        let cards: Vec<El> = notes.iter().map(note_card).collect();
+        El::grid(2, cards).spacing(8)
+    };
+    children.push(El::scroll(vec![board]).vexpand(true));
     El::vbox(children).spacing(8)
 }
 

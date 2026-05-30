@@ -9,7 +9,7 @@
 [[plugins]]
 id = "clipper"
 dir = "clipper"
-version = "0.2.0"
+version = "0.3.0"
 name = "Clipper"
 min_mshell = "0.8.8"
 description = "Clipboard manager + sticky notes on cliphist. Three tabs: searchable history with image thumbnails, pinned clips that survive rotation, and colour-coded notes. One-click copy, optional auto-paste, delete/clear. Needs cliphist + wl-clipboard."
