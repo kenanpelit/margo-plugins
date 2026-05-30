@@ -17,10 +17,10 @@ description = "Live ↓/↑ network throughput across all interfaces; click for 
 [[plugins]]
 id = "assistant-panel"
 dir = "assistant-panel"
-version = "0.3.3"
+version = "0.4.0"
 name = "Assistant Panel"
 min_mshell = "0.8.8"
-description = "AI assistant (Gemini): set model + API key, click for an in-shell streaming chat panel (wasm-plugins build) or a terminal chat. Needs curl + jq for the fallback."
+description = "Multi-provider AI chat (Gemini, OpenAI-compatible, Anthropic, Ollama, custom). Streaming, markdown, persistent history, header actions (Stop / Retry / Copy / New). Falls back to a terminal chat (curl + jq) on a non-wasm-plugins build."
 
 [[plugins]]
 id = "mullvad"
@@ -78,8 +78,8 @@ icon = "input-keyboard-symbolic"
 [[plugins]]
 id = "color-scheme-creator"
 dir = "color-scheme-creator"
-version = "0.1.0"
+version = "0.1.1"
 name = "Color Scheme Creator"
 min_mshell = "0.8.8"
-description = "Manage curated color schemes for margo's compositor palette. Save the current ~/.config/margo/colors.conf as a named preset, apply a saved preset (cp + mctl reload), or hex-edit any of the seven tokens inline. Port of the noctalia plugin scoped to margo's compositor palette."
-icon = "preferences-desktop-color-symbolic"
+description = "Manage curated color schemes for margo's compositor palette. Save the current ~/.config/margo/colors.conf as a named preset, apply a saved preset (cp + mctl reload), or hex-edit any of the seven tokens inline — each shown next to a live colour swatch. Port of the noctalia plugin scoped to margo's compositor palette."
+icon = "color-select-symbolic"
