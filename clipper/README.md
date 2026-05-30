@@ -6,19 +6,30 @@ rotation. A best-of-both port of noctalia's `clipper` and DMS's `ClipboardPlus`,
 built on the same backend they use: [`cliphist`](https://github.com/sentriz/cliphist)
 + wl-clipboard.
 
+Three tabs: **Clipboard · Pinned · Notes**.
+
 ## Features
 
-- **History** — every clip cliphist has recorded, text and images (images are
-  flagged with an image glyph + their dimensions).
+### Clipboard
+- **History** — every clip cliphist has recorded; **image entries show a real
+  thumbnail** (decoded once and cached), not just a label.
 - **Search** — type in the box and press Enter to filter the whole history.
 - **Copy** — click any entry to put it back on the clipboard (`cliphist decode
   | wl-copy`, works for text *and* images).
-- **Pin** — ☆ a text entry to keep it in a "Pinned" section forever; the full
-  content is stored in the plugin's data dir, so it survives even after the
-  clip rotates out of cliphist.
-- **Delete** — 🗑 a single entry, or clear the whole history from the header.
+- **Delete / Clear all** — 🗑 one entry, or wipe the whole history.
 - **Auto-paste** (optional) — after copying, replay Ctrl+V into the focused
   window (`wtype`); off by default.
+
+### Pinned
+- **☆ Pin** a text clip → its full content is stored in the plugin data dir,
+  so it survives even after the clip rotates out of cliphist. Click to copy.
+
+### Notes (sticky notes)
+- **Create / edit / delete** colour-coded sticky notes, persisted in the plugin
+  data dir.
+- **Recolour** — cycle a 5-colour palette (yellow / pink / blue / green /
+  purple); the colour shows as a swatch on each card.
+- **Copy** a note's text with one click.
 
 ## Requirements
 

@@ -1,9 +1,9 @@
 id = "clipper"
 name = "Clipper"
-version = "0.1.0"
+version = "0.2.0"
 author = "kenanpelit"
 min_mshell = "0.8.8"
-description = "Clipboard manager on top of cliphist: searchable history (text + images), one-click copy, optional auto-paste, per-entry delete, clear-all, and pinned items that survive history rotation. In-shell panel. Needs cliphist + wl-clipboard (wtype for auto-paste)."
+description = "Clipboard manager + sticky notes on cliphist. Three tabs: searchable history with image thumbnails, pinned clips that survive rotation, and colour-coded notes. One-click copy, optional auto-paste, delete/clear. Needs cliphist + wl-clipboard."
 
 entry = "plugin.wasm"
 entry_kind = "wasm"
