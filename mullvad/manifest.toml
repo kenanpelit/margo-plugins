@@ -1,6 +1,6 @@
 id = "mullvad"
 name = "Mullvad VPN"
-version = "0.2.0"
+version = "0.2.1"
 author = "kenanpelit"
 min_mshell = "0.8.8"
 description = "Mullvad VPN control — a rich in-shell panel (status, connect/disconnect/reconnect, lockdown + auto-connect toggles, searchable country list with relay counts). Needs the `mullvad` CLI + a wasm-plugins build of mshell."

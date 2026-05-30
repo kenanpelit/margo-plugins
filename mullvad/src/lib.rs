@@ -123,9 +123,13 @@ fn load_countries() -> Vec<(String, String, u32)> {
 // ── Render helpers ───────────────────────────────────────────────────────
 
 fn stat_tile(label: &str, value: String) -> El {
+    // The value is short *text* (a country, city, relay id, IP) — not a big
+    // dashboard number — so it uses the standard menu title size
+    // (`label-medium-bold`, 16px) instead of `.plugin-stat-value` (26px),
+    // which read oversized and out of step with the rest of the shell's menus.
     El::vbox(vec![
         El::label(label).class("plugin-stat-label"),
-        El::label(value).class("plugin-stat-value"),
+        El::label(value).class("label-medium-bold"),
     ])
     .spacing(4)
     .padding(12)
