@@ -1,19 +1,13 @@
 //! Model Usage — AI assistant usage stats (Claude Code + OpenRouter).
 //!
-//! Ports the noctalia `model-usage` plugin to margo's WASM tier. Two
-//! providers in v1 (Codex / Copilot / Gemini / Zen are queued for the
-//! next iteration once their auth surface is settled).
+//! Ports the noctalia `model-usage` plugin to margo's WASM tier following
+//! the §12 panel archetype in mshell-frame/DESIGN.md: leading-icon header
+//! with a circular refresh action, pill-capsule segmented tabs, calm
+//! surface-container cards inside, and tabular bar-rows for the recent
+//! activity chart.
 //!
-//! Architecture:
-//! - Each provider's snapshot lives in a `thread_local!` state cell.
-//! - `view()` reads the cells; it does *not* fetch — fetching is on demand
-//!   from `update(ev)` via Refresh / tab clicks / opens.
-//! - Settings (provider enable + API key) come through `host::get_setting`.
-//!   The `openrouter_api_key` is `type = "secret"` so it lives in the
-//!   system keyring; the bridge transparently maps it back here.
-//! - The panel is a stack with one tab per provider; the inactive tab is
-//!   never fetched until the user clicks it (so OpenRouter's HTTP request
-//!   only happens when its tab is selected).
+//! Two providers in v1 (Codex / Copilot / Gemini / Zen are queued for the
+//! next iteration once their auth surface is settled).
 
 use mplugin_sdk::{
     export_component, host, host::HttpRequest, Component, El, Event, EventKind,
@@ -56,7 +50,7 @@ struct RawDailyActivity {
 }
 
 #[derive(Deserialize, Default)]
-#[allow(dead_code)] // `date` is preserved for round-trip / future per-day filtering.
+#[allow(dead_code)] // `date` preserved for round-trip / future per-day filtering.
 struct RawDailyModelTokens {
     #[serde(default)]
     date: String,
@@ -64,6 +58,7 @@ struct RawDailyModelTokens {
     tokens_by_model: BTreeMap<String, i64>,
 }
 
+#[derive(Clone)]
 struct ClaudeStats {
     today: RawDailyActivity,
     total_messages: i64,
@@ -80,7 +75,6 @@ fn today_ymd() -> String {
 }
 
 fn fetch_claude() {
-    // Tilde expansion needs a shell; the host's `run` calls exec directly.
     let out = host::run(
         "sh",
         &["-c".into(), "cat ~/.claude/stats-cache.json".into()],
@@ -118,8 +112,7 @@ fn fetch_claude() {
         .sum();
     let mut days = raw.daily_activity.clone();
     days.sort_by(|a, b| a.date.cmp(&b.date));
-    let days = days.into_iter().rev().take(14).collect::<Vec<_>>();
-    let mut days = days;
+    let mut days = days.into_iter().rev().take(14).collect::<Vec<_>>();
     days.reverse();
     let mut by_model: BTreeMap<String, i64> = BTreeMap::new();
     for d in &raw.daily_model_tokens {
@@ -162,6 +155,7 @@ struct OpenRouterData {
     is_provisioning_key: bool,
 }
 
+#[derive(Clone)]
 struct OpenRouterStats {
     label: String,
     usage_usd: f64,
@@ -230,162 +224,190 @@ fn fmt_num(n: i64) -> String {
     }
 }
 
-fn stat_card(label: &str, value: String, hint: Option<String>) -> El {
+/// `[icon] Title                              ( ⟳ )` — the §12 panel header.
+/// `action_id` is the id sent on the refresh-button click.
+fn panel_header(icon: &str, title: &str, action_id: &str) -> El {
+    El::hbox(vec![
+        El::image(icon),
+        El::label(title).hexpand(true).halign("start"),
+        El::button(action_id, "")
+            .class("plugin-panel-action")
+            .prop("icon", "view-refresh-symbolic"),
+    ])
+    .spacing(8)
+    .class("plugin-panel-header")
+}
+
+/// Tonal stat tile (label · value · hint).
+fn stat_tile(label: &str, value: String, hint: Option<String>) -> El {
     let mut children = vec![
-        El::label(label).class("dim-label"),
-        El::label(value).class("label-large-bold"),
+        El::label(label).class("plugin-stat-label"),
+        El::label(value).class("plugin-stat-value"),
     ];
     if let Some(h) = hint {
-        children.push(El::label(h).class("dim-label"));
+        children.push(El::label(h).class("plugin-stat-hint"));
     }
     El::vbox(children)
-        .padding(10)
-        .class("plugin-row")
+        .spacing(4)
+        .padding(12)
+        .class("plugin-stat")
         .hexpand(true)
 }
 
-fn bar_chart_row(date: &str, count: i64, peak: i64) -> El {
+/// One row of the recent-activity / models-by-token bar charts:
+/// `[label  ████████      count]`.
+fn bar_row(label: &str, count: i64, peak: i64) -> El {
     let frac = if peak > 0 {
         (count as f64 / peak as f64).clamp(0.0, 1.0)
     } else {
         0.0
     };
     El::hbox(vec![
-        El::label(date.to_string())
-            .class("dim-label")
-            .prop("width", "100"),
+        El::label(label.to_string()).prop("width", "120"),
         El::progress(frac).hexpand(true),
-        El::label(fmt_num(count)).halign("end").prop("width", "60"),
+        El::label(fmt_num(count))
+            .halign("end")
+            .prop("width", "60"),
     ])
-    .spacing(8)
-    .padding(2)
+    .spacing(10)
+    .class("plugin-bar-row")
+}
+
+/// Section heading inside a pane.
+fn section_title(text: &str) -> El {
+    El::label(text)
+        .class("label-medium-bold")
+        .halign("start")
+        .padding(4)
 }
 
 // ── Panes ────────────────────────────────────────────────────────────────
 
 fn claude_pane() -> El {
     let err = CLAUDE_ERR.with(|e| e.borrow().clone());
+    let header = panel_header(
+        "applications-development-symbolic",
+        "Claude Code",
+        "refresh",
+    );
+
     if !err.is_empty() {
         return El::vbox(vec![
-            El::markdown(format!("**Claude Code**\n{err}")).class("plugin-hero"),
+            header,
+            El::label(err).class("dim-label").halign("start"),
             El::button("refresh", "Try again")
                 .class("plugin-action plugin-action-primary"),
         ])
         .padding(12)
-        .spacing(10)
+        .spacing(12)
         .with_id("claude");
     }
-    let opt = CLAUDE.with(|c| c.borrow().as_ref().map(snapshot_for_claude));
+
+    let opt = CLAUDE.with(|c| c.borrow().clone());
     let Some(s) = opt else {
         return El::vbox(vec![
-            El::label("Loading Claude stats…").class("dim-label"),
-            El::button("refresh", "Reload").class("plugin-action plugin-action-primary"),
+            header,
+            El::label("Loading Claude stats…").class("dim-label").halign("start"),
         ])
         .padding(12)
-        .spacing(10)
+        .spacing(12)
         .with_id("claude");
     };
 
     let mut children: Vec<El> = vec![
-        El::markdown(format!(
-            "**Claude Code** — {} prompts today · last updated `{}`",
-            s.today.message_count, s.last_computed
-        ))
-        .class("plugin-hero plugin-hero-on"),
+        header,
+        // Compact 3-stat strip — DESIGN.md §0 calm density.
         El::grid(
             3,
             vec![
-                stat_card("Today", fmt_num(s.today.message_count), Some(format!("{} sessions", s.today.session_count))),
-                stat_card("Lifetime", fmt_num(s.total_messages), Some(format!("{} sessions", s.total_sessions))),
-                stat_card("Tools today", fmt_num(s.today.tool_call_count), Some(format!("{} total", s.total_tool_calls))),
+                stat_tile(
+                    "Today prompts",
+                    fmt_num(s.today.message_count),
+                    Some(format!("{} sessions", s.today.session_count)),
+                ),
+                stat_tile(
+                    "Lifetime prompts",
+                    fmt_num(s.total_messages),
+                    Some(format!("{} sessions", s.total_sessions)),
+                ),
+                stat_tile(
+                    "Tools today",
+                    fmt_num(s.today.tool_call_count),
+                    Some(format!("{} total", s.total_tool_calls)),
+                ),
             ],
         )
-        .spacing(8),
+        .spacing(12),
+        El::label(format!("Source · ~/.claude/stats-cache.json · last computed {}", s.last_computed))
+            .class("dim-label")
+            .halign("start")
+            .padding(4),
     ];
 
     if !s.days.is_empty() {
         let peak = s.days.iter().map(|d| d.message_count).max().unwrap_or(0);
-        children.push(El::separator());
-        children.push(El::label("Recent activity").class("label-medium-bold"));
+        children.push(section_title("Recent activity"));
         let rows: Vec<El> = s
             .days
             .iter()
-            .map(|d| bar_chart_row(&d.date, d.message_count, peak))
+            .map(|d| bar_row(&d.date, d.message_count, peak))
             .collect();
-        children.push(El::vbox(rows).spacing(2));
+        children.push(El::vbox(rows).spacing(2).class("plugin-card"));
     }
 
     if !s.by_model.is_empty() {
-        children.push(El::separator());
-        children.push(El::label("Tokens by model").class("label-medium-bold"));
+        children.push(section_title("Tokens by model"));
         let peak = s.by_model.values().copied().max().unwrap_or(0);
         let mut models: Vec<(&String, &i64)> = s.by_model.iter().collect();
         models.sort_by(|a, b| b.1.cmp(a.1));
-        for (model, tokens) in models {
-            children.push(bar_chart_row(model, *tokens, peak));
-        }
+        let rows: Vec<El> = models
+            .into_iter()
+            .map(|(m, t)| bar_row(m, *t, peak))
+            .collect();
+        children.push(El::vbox(rows).spacing(2).class("plugin-card"));
     }
 
-    children.push(
-        El::button("refresh", "Refresh")
-            .class("plugin-action plugin-action-primary")
-            .hexpand(true),
-    );
-
-    El::vbox(children).padding(12).spacing(8).with_id("claude")
-}
-
-fn snapshot_for_claude(s: &ClaudeStats) -> ClaudeStats {
-    ClaudeStats {
-        today: s.today.clone(),
-        total_messages: s.total_messages,
-        total_sessions: s.total_sessions,
-        total_tool_calls: s.total_tool_calls,
-        days: s.days.clone(),
-        by_model: s.by_model.clone(),
-        last_computed: s.last_computed.clone(),
-    }
+    El::vbox(children).spacing(14).with_id("claude")
 }
 
 fn openrouter_pane() -> El {
     let err = OPENROUTER_ERR.with(|e| e.borrow().clone());
     let enabled = host::get_setting("openrouter_enabled") == "true";
+    let header = panel_header("network-server-symbolic", "OpenRouter", "refresh");
 
     if !enabled {
         return El::vbox(vec![
-            El::markdown("**OpenRouter**\nDisabled. Enable it in Settings → Plugins → Model Usage.")
-                .class("plugin-hero"),
+            header,
+            El::label("Disabled. Enable it in Settings → Plugins → Model Usage.")
+                .class("dim-label")
+                .halign("start"),
         ])
         .padding(12)
+        .spacing(12)
         .with_id("openrouter");
     }
     if !err.is_empty() {
         return El::vbox(vec![
-            El::markdown(format!("**OpenRouter**\n{err}")).class("plugin-hero"),
+            header,
+            El::label(err).class("dim-label").halign("start"),
             El::button("refresh", "Try again")
                 .class("plugin-action plugin-action-primary"),
         ])
         .padding(12)
-        .spacing(10)
+        .spacing(12)
         .with_id("openrouter");
     }
 
-    let opt = OPENROUTER.with(|c| {
-        c.borrow().as_ref().map(|s| OpenRouterStats {
-            label: s.label.clone(),
-            usage_usd: s.usage_usd,
-            limit_usd: s.limit_usd,
-            remaining_usd: s.remaining_usd,
-            is_provisioning: s.is_provisioning,
-        })
-    });
+    let opt = OPENROUTER.with(|c| c.borrow().clone());
     let Some(s) = opt else {
         return El::vbox(vec![
-            El::label("Tap Refresh to fetch your OpenRouter usage.").class("dim-label"),
-            El::button("refresh", "Refresh").class("plugin-action plugin-action-primary"),
+            header,
+            El::label("Tap the refresh icon to fetch your OpenRouter usage.")
+                .class("dim-label")
+                .halign("start"),
         ])
         .padding(12)
-        .spacing(10)
+        .spacing(12)
         .with_id("openrouter");
     };
 
@@ -397,35 +419,47 @@ fn openrouter_pane() -> El {
         (u, Some(l)) if l > 0.0 => (u / l).clamp(0.0, 1.0),
         _ => 0.0,
     };
-    let remaining_text = s
-        .remaining_usd
-        .map(|r| format!("${:.2} remaining", r))
-        .unwrap_or_else(|| "—".to_string());
 
-    let label = if s.label.trim().is_empty() {
-        "OpenRouter".to_string()
+    let mut tiles = vec![
+        stat_tile(
+            "Spent",
+            format!("${:.2}", s.usage_usd),
+            Some(limit_text.clone()),
+        ),
+    ];
+    if let Some(r) = s.remaining_usd {
+        tiles.push(stat_tile(
+            "Remaining",
+            format!("${:.2}", r),
+            None,
+        ));
+    }
+
+    let key_label = if s.label.trim().is_empty() {
+        "default".to_string()
     } else {
         s.label.clone()
     };
-    let provisioning = if s.is_provisioning {
-        " · provisioning key"
+    let provisioning_hint = if s.is_provisioning {
+        Some("Provisioning key".to_string())
     } else {
-        ""
+        None
     };
+    tiles.push(stat_tile("Key", key_label, provisioning_hint));
 
     El::vbox(vec![
-        El::markdown(format!("**OpenRouter — {label}**\n{limit_text}{provisioning}"))
-            .class("plugin-hero plugin-hero-on"),
-        El::label("Spending").class("label-medium-bold"),
-        El::progress(used_fraction).hexpand(true),
-        El::label(remaining_text).class("dim-label"),
-        El::separator(),
-        El::button("refresh", "Refresh")
-            .class("plugin-action plugin-action-primary")
-            .hexpand(true),
+        header,
+        El::grid(tiles.len() as u32, tiles).spacing(12),
+        section_title("Spending"),
+        El::vbox(vec![
+            El::progress(used_fraction).hexpand(true),
+            El::label(limit_text).class("dim-label"),
+        ])
+        .spacing(6)
+        .padding(12)
+        .class("plugin-card"),
     ])
-    .padding(12)
-    .spacing(8)
+    .spacing(14)
     .with_id("openrouter")
 }
 
@@ -437,13 +471,10 @@ fn ensure_inited() {
             return;
         }
         *i.borrow_mut() = true;
-        // Pull the user's preferred default tab.
         let default = host::get_setting("active_tab");
         if !default.is_empty() {
             TAB.with(|t| *t.borrow_mut() = default);
         }
-        // First fetch happens lazily; the user opens the panel + we fetch
-        // for the visible tab immediately so they see data on open.
     });
 }
 
@@ -468,8 +499,6 @@ struct ModelUsage;
 fn view_tree() -> El {
     ensure_inited();
     let tab = TAB.with(|t| t.borrow().clone());
-    // Fetch the active tab on demand if its cache is empty (so opening the
-    // panel without manually hitting Refresh still shows data).
     let needs_fetch = match tab.as_str() {
         "claude" => CLAUDE.with(|c| c.borrow().is_none())
             && CLAUDE_ERR.with(|e| e.borrow().is_empty()),
@@ -480,25 +509,27 @@ fn view_tree() -> El {
     if needs_fetch {
         refresh_for(&tab);
     }
+    // Pill-capsule segmented control (DESIGN.md §12).
+    let tabs = El::hbox(vec![
+        El::button("tab-claude", "Claude").class(if tab == "claude" {
+            "plugin-segment plugin-segment-on plugin-expand"
+        } else {
+            "plugin-segment plugin-expand"
+        }),
+        El::button("tab-openrouter", "OpenRouter").class(if tab == "openrouter" {
+            "plugin-segment plugin-segment-on plugin-expand"
+        } else {
+            "plugin-segment plugin-expand"
+        }),
+    ])
+    .class("plugin-segment-bar");
+
     El::vbox(vec![
-        El::hbox(vec![
-            El::button("tab-claude", "Claude").class(if tab == "claude" {
-                "plugin-toggle plugin-toggle-on plugin-expand"
-            } else {
-                "plugin-toggle plugin-expand"
-            }),
-            El::button("tab-openrouter", "OpenRouter").class(if tab == "openrouter" {
-                "plugin-toggle plugin-toggle-on plugin-expand"
-            } else {
-                "plugin-toggle plugin-expand"
-            }),
-        ])
-        .spacing(6),
+        tabs,
         El::stack(tab.as_str(), vec![claude_pane(), openrouter_pane()]),
     ])
-    .spacing(10)
-    .padding(8)
-    .class("plugin-panel-body")
+    .spacing(16)
+    .class("plugin-panel-large")
 }
 
 impl Component for ModelUsage {
@@ -517,8 +548,6 @@ impl Component for ModelUsage {
                 _ => {}
             },
             EventKind::Keybind if ev.id == "open" => {
-                // The shell already opened the panel; just refresh the active
-                // tab so the freshest data is on screen.
                 let tab = TAB.with(|t| t.borrow().clone());
                 refresh_for(&tab);
             }
