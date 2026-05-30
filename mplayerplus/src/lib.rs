@@ -196,25 +196,28 @@ fn view_tree() -> El {
         .class("plugin-panel-large");
     }
 
-    // Title + artist stay full-strength regardless of play state (no fading on
-    // pause/stop); the album line is the only secondary text.
-    let mut meta = vec![
+    let meta = vec![
         El::label(m.title.clone()).class("label-large-bold").halign("center"),
         El::label(m.artist.clone()).class("label-medium-bold").halign("center"),
+        El::label(if m.album.trim().is_empty() { String::new() } else { m.album.clone() })
+            .class("dim-label")
+            .halign("center"),
     ];
-    if !m.album.trim().is_empty() {
-        meta.push(El::label(m.album.clone()).class("dim-label").halign("center"));
-    }
-    // Communicate a non-playing state with an explicit badge instead of dimming.
-    if m.status == "paused" {
-        meta.push(El::label("Paused").class("plugin-status-badge").halign("center"));
-    } else if m.status == "stopped" {
-        meta.push(El::label("Stopped").class("plugin-status-badge").halign("center"));
-    }
+
+    // Cover + track info fade when the player is paused/stopped (matching the
+    // built-in media pill); the transport stays full-strength so it's clearly
+    // actionable.
+    let head_class = if m.status == "playing" {
+        "mplayer-head"
+    } else {
+        "mplayer-head mplayer-paused"
+    };
+    let head = El::vbox(vec![art_view(&m), El::vbox(meta).spacing(2)])
+        .spacing(12)
+        .class(head_class);
 
     El::vbox(vec![
-        art_view(&m),
-        El::vbox(meta).spacing(2),
+        head,
         progress_row(&m),
         controls_row(&m),
         seek_row(),
