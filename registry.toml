@@ -7,15 +7,6 @@
 # holds the plugin's manifest.toml; `version` must match that manifest.
 #
 [[plugins]]
-id = "clipper"
-dir = "clipper"
-version = "0.3.0"
-name = "Clipper"
-min_mshell = "0.8.8"
-description = "Clipboard manager + sticky notes on cliphist. Three tabs: searchable history with image thumbnails, pinned clips that survive rotation, and colour-coded notes. One-click copy, optional auto-paste, delete/clear. Needs cliphist + wl-clipboard."
-icon = "edit-paste-symbolic"
-
-[[plugins]]
 id = "network-speed"
 dir = "network-speed"
 version = "1.1.0"
