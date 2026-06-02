@@ -1,6 +1,6 @@
 id = "demo-kit"
 name = "Demo Kit"
-version = "0.1.1"
+version = "0.1.2"
 author = "kenanpelit"
 min_mshell = "0.9.4"
 description = "A reference plugin that exercises every node kind and host capability in the WASM tier. Use it as a living example when authoring your own plugin."

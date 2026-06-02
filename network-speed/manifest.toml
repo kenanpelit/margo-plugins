@@ -1,6 +1,6 @@
 id = "network-speed"
 name = "Network Speed"
-version = "1.1.0"
+version = "1.1.1"
 author = "kenanpelit"
 min_mshell = "0.9.4"
 description = "Live download / upload throughput (↓ / ↑ per second) across all real interfaces, sampled from /proc/net/dev. Click for a quick network menu."

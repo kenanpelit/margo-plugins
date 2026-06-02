@@ -1,7 +1,7 @@
 # AI assistant usage stats — port of the noctalia model-usage plugin.
 [package]
 name = "model-usage"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 publish = false
 

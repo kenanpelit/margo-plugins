@@ -7,7 +7,7 @@
 # mplugin-sdk path assumes ~/.kod/margo is a sibling of ~/.kod/margo-plugins.
 [package]
 name = "mullvad"
-version = "0.2.3"
+version = "0.2.4"
 edition = "2021"
 publish = false
 

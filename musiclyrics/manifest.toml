@@ -1,6 +1,6 @@
 id = "musiclyrics"
 name = "Music Lyrics"
-version = "0.1.2"
+version = "0.1.3"
 author = "kenanpelit"
 min_mshell = "0.9.4"
 description = "Time-synced lyrics for whatever's playing (MPRIS). Fetches from lrclib.net, caches locally, and highlights the current line live as the song plays. The bar pill can show the current line. In-shell panel."

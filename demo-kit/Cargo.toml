@@ -6,7 +6,7 @@
 #           && cp target/wasm32-wasip2/release/demo_kit.wasm ./plugin.wasm
 [package]
 name = "demo-kit"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 publish = false
 

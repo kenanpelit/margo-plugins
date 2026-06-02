@@ -1,6 +1,6 @@
 id = "todo"
 name = "Todo"
-version = "0.2.1"
+version = "0.2.2"
 author = "kenanpelit"
 min_mshell = "0.9.4"
 description = "Local task list with subtasks, inline edit, reordering, and All / Active / Done filters. Items live in todos.json in the plugin's data dir via the host's scoped write-file capability — no network, no shell-outs. The bar pill shows a live count."
