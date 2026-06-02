@@ -821,12 +821,47 @@ The big rules:
   `plugin-toggle-on` accent — pick the right one for the meaning, not
   the look.
 - **Respect the radius + spacing scales.** Don't invent a new `padding:
-  9px`; the variables are `--space-1`/`--space-2`/`--space-3`, the
-  radii are `--radius-sm`/`-md`/`-lg`. The renderer's
-  `.padding(px)` accepts any value, but stay close to the scale.
+  9px`; `.spacing(px)`/`.padding(px)` must land on the **4 / 8 / 12 / 16
+  / 24 / 32** scale (1–2px hairline is the only sub-4 exception). The
+  renderer accepts any value, but off-scale gaps make a plugin read as
+  "not part of the shell".
 - **Per-node inline styles are explicitly out of scope.** If you want
   something the design language doesn't have, that's a renderer / SDK
   feature request — file an issue on the [roadmap](road_map.md) board.
+
+### Self-lint before you publish (the plugin half of DESIGN.md §15)
+
+Plugins ship no SCSS, so the shell's grep gate doesn't cover them —
+**run these over your `src/` yourself.** A clean plugin returns nothing:
+
+```sh
+# No hardcoded colour anywhere in the node tree (use the class taxonomy).
+grep -rnE '#[0-9a-fA-F]{3,8}\b' src/
+# Spacing/padding must be on-scale; this flags off-scale gaps to review.
+grep -roE '\.(padding|spacing)\([0-9]+\)' src/ | sort -u
+#   → every value should be one of 0/2/4/8/12/16/24/32 (2 = hairline).
+```
+
+A panel reading async data (`host::run`, `http_*`, `system-state`) must
+also define its **non-happy states** (DESIGN.md §17) — never a blank or
+reflowing panel:
+
+| State | Render |
+|---|---|
+| **Loading** | a calm placeholder line / spinner, not an empty box |
+| **Empty** | a dim centred line ("Nothing yet"), no error styling |
+| **Error** | an inline `plugin-action-danger`-tinted message + a Retry |
+| **No service** | a dim "X not installed / not running" line (informational, not red) |
+
+And the accessibility floor (DESIGN.md §13.8): an **icon-only**
+button/row sets a label or tooltip describing the *action* ("Reconnect",
+"Delete") — the glyph is not a name. Reordering uses up/down buttons
+(the WASM renderer has no drag gestures); keep them keyboard-reachable.
+
+> Same spirit as the shell's CI lint, run by hand: a plugin that passes
+> these greps + states + labels looks and behaves like it always
+> belonged. The current first-party set passes (zero hardcoded hex,
+> spacing on-scale).
 
 ---
 
@@ -852,7 +887,7 @@ id          = "hello"
 dir         = "hello"            # folder name
 version     = "0.1.0"            # must match manifest
 name        = "Hello"
-min_mshell  = "0.8.8"
+min_mshell  = "0.9.4"
 description = "One sentence."
 icon        = "applications-engineering-symbolic"
 ```

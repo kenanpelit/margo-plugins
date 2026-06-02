@@ -2,7 +2,7 @@ id = "assistant-panel"
 name = "Assistant Panel"
 version = "0.4.1"
 author = "kenanpelit"
-min_mshell = "0.8.8"
+min_mshell = "0.9.4"
 description = "Multi-provider AI chat (Gemini, OpenAI-compatible, Anthropic, Ollama, custom). Streaming, markdown, persistent history, header actions (Stop / Retry / Copy / New). On a non-wasm-plugins build it falls back to a terminal chat (curl + jq)."
 
 # Sandboxed WASM chat panel (the mplugins WASM tier). A `wasm-plugins` build of

@@ -2,7 +2,7 @@ id = "system-monitor"
 name = "System Monitor"
 version = "0.1.1"
 author = "kenanpelit"
-min_mshell = "0.8.8"
+min_mshell = "0.9.4"
 description = "Live RAM / load / disk / uptime + battery + network in a single panel. Reads /proc through the host's `run` capability and pulls battery/network from `system-state`."
 icon = "utilities-system-monitor-symbolic"
 

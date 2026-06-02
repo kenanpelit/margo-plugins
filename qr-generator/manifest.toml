@@ -2,7 +2,7 @@ id = "qr-generator"
 name = "QR Generator"
 version = "0.1.1"
 author = "kenanpelit"
-min_mshell = "0.8.8"
+min_mshell = "0.9.4"
 description = "Generate a QR code from text, the clipboard, or your current Wi-Fi network — shown right in the panel, copyable as text or PNG. Needs qrencode."
 
 entry = "plugin.wasm"

@@ -2,7 +2,7 @@ id = "mplayerplus"
 name = "Media Player Plus"
 version = "0.4.1"
 author = "kenanpelit"
-min_mshell = "0.8.8"
+min_mshell = "0.9.4"
 description = "A full media player panel for whatever's playing (MPRIS): album art, live progress, play/pause, prev/next, ±10s seek, shuffle & repeat. Controls the active player via playerctl. In-shell panel."
 
 entry = "plugin.wasm"

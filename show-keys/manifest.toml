@@ -2,7 +2,7 @@ id = "show-keys"
 name = "Show Keys"
 version = "0.1.2"
 author = "kenanpelit"
-min_mshell = "0.8.8"
+min_mshell = "0.9.4"
 description = "Live keyboard-input display via evtest. Useful for screen recordings + tutorials. Port of the noctalia plugin; uses the host's process-start capability for streaming evtest stdout. Needs your user in the `input` group + evtest installed."
 icon = "input-keyboard-symbolic"
 

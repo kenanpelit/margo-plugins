@@ -2,7 +2,7 @@ id = "breathing"
 name = "Breathing"
 version = "0.1.5"
 author = "kenanpelit"
-min_mshell = "0.8.8"
+min_mshell = "0.9.4"
 description = "Guided breathing exercises for calm & focus — 6 techniques (Deep, 4-7-8, Box, Equal, Resonance, Alternate Nostril) with a live breathing orb, phase coaching, and a duration timer. In-shell panel; optional chime cues need paplay."
 
 # Sandboxed WASM panel (the mplugins WASM tier). A `wasm-plugins` build of

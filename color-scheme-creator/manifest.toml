@@ -2,7 +2,7 @@ id = "color-scheme-creator"
 name = "Color Scheme Creator"
 version = "0.1.2"
 author = "kenanpelit"
-min_mshell = "0.8.8"
+min_mshell = "0.9.4"
 description = "Manage hand-curated color schemes for margo's compositor palette (~/.config/margo/colors.conf). Save the current colours as a named preset, browse saved presets, apply one with a click, and tweak individual hex values inline. Port of the noctalia color-scheme-creator scoped to margo's 7 compositor tokens."
 icon = "color-select-symbolic"
 
