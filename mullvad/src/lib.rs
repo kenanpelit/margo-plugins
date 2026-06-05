@@ -26,6 +26,7 @@ fn mullvad(args: &[&str]) -> String {
 #[derive(Default, Clone)]
 struct Status {
     connected: bool,
+    connecting: bool,
     state: String,
     relay: String,
     location: String,
@@ -45,6 +46,7 @@ fn status() -> Status {
             st.state = t.to_string();
             let lc = t.to_lowercase();
             st.connected = lc.starts_with("connected");
+            st.connecting = lc.starts_with("connecting");
         }
         if let Some(r) = t.strip_prefix("Relay:") {
             st.relay = r.trim().to_string();
@@ -163,10 +165,16 @@ fn hero_card(st: &Status) -> El {
         } else {
             "Connected".to_string()
         };
-        let subtitle = if !st.city.is_empty() {
+        let place = if !st.city.is_empty() {
             st.city.clone()
         } else {
             st.location.clone()
+        };
+        // Surface the tunnel protocol (WireGuard / OpenVPN) next to the place.
+        let subtitle = if st.tunnel_type.is_empty() {
+            place
+        } else {
+            format!("{place} · {}", st.tunnel_type)
         };
         El::hbox(vec![
             El::image("network-vpn-symbolic"),
@@ -191,6 +199,23 @@ fn hero_card(st: &Status) -> El {
         .spacing(12)
         .padding(16)
         .class("plugin-hero plugin-hero-on")
+    } else if st.connecting {
+        El::hbox(vec![
+            El::image("network-vpn-acquiring-symbolic"),
+            El::vbox(vec![
+                El::label("Connecting…")
+                    .class("label-large-bold")
+                    .halign("start"),
+                El::label("Bringing the tunnel up.")
+                    .class("dim-label")
+                    .halign("start"),
+            ])
+            .spacing(4)
+            .hexpand(true),
+        ])
+        .spacing(12)
+        .padding(16)
+        .class("plugin-hero")
     } else {
         El::hbox(vec![
             El::image("network-vpn-disabled-symbolic"),

@@ -1,9 +1,9 @@
 id = "mullvad"
 name = "Mullvad VPN"
-version = "0.2.4"
+version = "0.3.0"
 author = "kenanpelit"
-min_mshell = "0.9.4"
-description = "Mullvad VPN control — a rich in-shell panel (status, connect/disconnect/reconnect, lockdown + auto-connect toggles, searchable country list with relay counts). Needs the `mullvad` CLI + a wasm-plugins build of mshell."
+min_mshell = "1.0.0"
+description = "Mullvad VPN control — a rich in-shell panel (status, connect/disconnect/reconnect, lockdown + auto-connect toggles, searchable country list with relay counts). The bar pill is a clean icon that tints with the accent colour when connected; right-click shows the active relay + location. Needs the `mullvad` CLI + a wasm-plugins build of mshell."
 
 # Sandboxed WASM panel (mplugins WASM tier). A wasm-plugins build of mshell
 # renders it in-shell; otherwise the pill falls back to the on_click below.
@@ -13,11 +13,17 @@ entry_kind = "wasm"
 [[widget]]
 key = "vpn"
 icon = "network-vpn-symbolic"
-tooltip = "Mullvad VPN — click for the control panel"
-# Pill label: the active relay, or "off". Polled every 10s.
-exec = "mullvad status 2>/dev/null | awk 'NR==1{c=($1==\"Connected\")} /Relay:/{r=$2} END{print (c ? r : \"off\")}'"
+tooltip = "Mullvad VPN — click for the control panel, right-click for the active relay"
+# Icon-only pill. The exec emits `#active` only when connected; mshell turns a
+# `#<state>` first line into a CSS class, so `.custom-bar-widget.active` tints
+# the icon with the accent (`var(--primary)`). Off → no class → default colour.
+# No text label keeps the bar clean. Polled every 10s.
+exec = "mullvad status 2>/dev/null | awk 'NR==1 && $1==\"Connected\"{print \"#active\"}'"
 template = "{output}"
 interval = 10
-max_chars = 18
 opens_panel = true
-on_click = "notify-send -- Mullvad \"$(mullvad status 2>/dev/null)\""
+# Left click → the in-shell panel (or, without a wasm-plugins build, a status
+# notification as the fallback).
+on_click = "notify-send -i network-vpn-symbolic 'Mullvad VPN' \"$(mullvad status 2>/dev/null)\""
+# Right click → the active relay + location (the "long name").
+on_click_right = "notify-send -i network-vpn-symbolic 'Mullvad VPN' \"$(mullvad status 2>/dev/null | head -n 3)\""
